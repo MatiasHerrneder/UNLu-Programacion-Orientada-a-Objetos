@@ -1,8 +1,8 @@
 package ar.edu.unlu.poo.tp1.ej4;
 
 public class Nodo {
-    Nodo siguiente = null;
-    Object dato;
+    private Nodo siguiente = null;
+    private Object dato;
 
     public Nodo(Object dato) {
         setDato(dato);
