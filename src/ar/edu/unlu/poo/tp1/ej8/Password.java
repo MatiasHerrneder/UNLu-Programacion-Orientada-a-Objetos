@@ -49,4 +49,8 @@ public class Password {
         while(!esFuerte()) setContra(longitud);
     }
 
+    public void crearContraFuerte(){
+        while(!esFuerte()) setContra(getContra().length());
+    }
+
 }

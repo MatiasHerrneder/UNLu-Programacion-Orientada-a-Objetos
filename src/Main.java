@@ -11,5 +11,8 @@ public class Main {
         int t = k.nextInt();
         PasswordManager.crearClaves(c, t);
         PasswordManager.mostrarClaves();
+        System.out.println("\nAhora reconstruyo las contraseñas debiles: ");
+        PasswordManager.reconstruirDebiles();
+        PasswordManager.mostrarClaves();
     }
 }

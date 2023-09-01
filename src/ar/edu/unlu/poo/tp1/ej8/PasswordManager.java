@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 public class PasswordManager {
     static private ArrayList<Password> coleccion = new ArrayList<>();
+
     static public void crearClaves(int cant, int tam) {
         coleccion = new ArrayList<>();
         for (int i = 0; i < cant; i++){
@@ -14,5 +15,13 @@ public class PasswordManager {
     static public void mostrarClaves() {
         for (Password p : coleccion)
             System.out.println(p.getContra() + " - " + (p.esFuerte() ? "Fuerte" : "Debil"));
+    }
+
+    static public void reconstruirDebiles() {
+        for (Password p : coleccion) {
+            if (!p.esFuerte()) {
+                p.crearContraFuerte();
+            }
+        }
     }
 }
