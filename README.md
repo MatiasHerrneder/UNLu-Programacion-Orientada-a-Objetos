@@ -1,2 +1,2 @@
 ### UML del ejercicio
-[uml](image.png)
+![uml](image.png)
