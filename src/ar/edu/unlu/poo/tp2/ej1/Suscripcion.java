@@ -30,11 +30,7 @@ public class Suscripcion {
         }
     }
     public void quitarActividad(Actividad actividad) {
-        for (Actividad a : getActividades()) {
-            if (a.equals(actividad)) {
-                getActividades().remove(a);
-            }
-        }
+        getActividades().remove(actividad);
     }
     public void setTipoDeSuscripcion(TipoDeSuscripcion tipoDeSuscripcion) {
         this.tipoDeSuscripcion = tipoDeSuscripcion;
@@ -49,6 +45,12 @@ public class Suscripcion {
     public void mostrarListaDeSocios() {
         for (Socio s : getSociosAdheridos()) {
             System.out.println(s.devolverDatos());
+        }
+    }
+
+    public void mostarListaDeActividades() {
+        for (Actividad a : getActividades()) {
+            System.out.println(a.getDescripcion());
         }
     }
 }
