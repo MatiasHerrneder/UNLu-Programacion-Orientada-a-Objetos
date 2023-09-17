@@ -1,5 +1,6 @@
 package ar.edu.unlu.poo.tp2.ej5;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 
 public class Cliente {
@@ -11,6 +12,7 @@ public class Cliente {
     private float limiteDeGiroEnDescubierto;
     private Inversion inversion = null;
     private final ArrayList<Inversion> historialDeInversiones = new ArrayList<>();
+    private boolean canceladoAutomaticoDeInversion = false;
 
     public Cliente(int cuil, String nombre, float limiteDeGiroEnDescubierto) {
         setCuil(cuil);
@@ -66,6 +68,10 @@ public class Cliente {
         return inversion;
     }
 
+    public boolean isCanceladoAutomaticoDeInversion() {
+        return canceladoAutomaticoDeInversion;
+    }
+
     private ArrayList<Inversion> getHistorialDeInversiones() {
         return historialDeInversiones;
     }
@@ -90,11 +96,12 @@ public class Cliente {
         return false;
     }
 
-    public boolean finalizarInversion() {
+    public boolean finalizarInversion(LocalDate fechaDeFinalizacion) {
         if (getInversion() != null) {
-            sumarSaldoDebito(getInversion().retorno());
+            sumarSaldoDebito(getInversion().retorno(fechaDeFinalizacion));
             agregarInversionAlHistorial(getInversion());
             setInversion(null);
+            return true;
         }
         return false;
     }
@@ -105,12 +112,27 @@ public class Cliente {
     }
 
     public EstadoTransaccion restarSaldoDebito(float monto) {
-        if (getSaldo() - monto > - getLimiteDeGiroEnDescubierto()) {
-            setSaldo(getSaldo() - monto);
-            if (getSaldo() > 0) {
-                return EstadoTransaccion.completada;
+        if (isCanceladoAutomaticoDeInversion()) {
+            if (getSaldo() - monto + getPosibleRetornoDeInversion() > - getLimiteDeGiroEnDescubierto()) {
+                if (getSaldo() - monto < 0) {
+                    finalizarInversion(LocalDate.now());
+                    System.out.println("Se cancelo la inversion para devolver fondos");
+                }
+                setSaldo(getSaldo() - monto);
+                if (getSaldo() > 0) {
+                    return EstadoTransaccion.completada;
+                }
+                else return EstadoTransaccion.giradoEnDescubierto;
             }
-            else return EstadoTransaccion.giradoEnDescubierto;
+        }
+        else {
+            if (getSaldo() - monto > - getLimiteDeGiroEnDescubierto()) {
+                setSaldo(getSaldo() - monto);
+                if (getSaldo() > 0) {
+                    return EstadoTransaccion.completada;
+                }
+                else return EstadoTransaccion.giradoEnDescubierto;
+            }
         }
         return EstadoTransaccion.noCompletada;
     }
@@ -135,6 +157,15 @@ public class Cliente {
         }
     }
 
+    public float getPosibleRetornoDeInversion() {
+        if (getInversion() == null) {
+            return 0;
+        }
+        else {
+            return getInversion().retorno(LocalDate.now());
+        }
+    }
+
     public float getSaldoDeudorCredito() {
         if (getCuentaCredito() == null) {
             return 0;
@@ -151,6 +182,16 @@ public class Cliente {
         else {
             return getCuentaCredito().getLimiteDeGasto();
         }
+    }
+
+    public void activarCanceladoAutomaticoDeInversion() {
+        System.out.println("Las inversiones se cancelaran si es necesario");
+        canceladoAutomaticoDeInversion = true;
+    }
+
+    public void desactivarCanceladoAutomaticoDeInversion() {
+        System.out.println("Las inversiones ya NO se cancelaran automaticamente");
+        canceladoAutomaticoDeInversion = false;
     }
 
 }

@@ -37,8 +37,18 @@ public class Inversion {
         this.fechaDeInversion = fechaDeInversion;
     }
 
-    public float retorno() {
-        return (float) (getValor() * 1.4);
+    public float retorno(LocalDate fechaDeCierre) {
+        if (fechaDeCierre.isBefore(getFechaDeInversion().plusDays(getDuracion()))) {
+            if (getFechaDeInversion().plusDays(30).isAfter(fechaDeCierre)) {
+                return getValor();
+            }
+            else {
+                return (float) (getValor() * 1.05);
+            }
+        }
+        else {
+            return (float) (getValor() * 1.4);
+        }
     }
 
 }
