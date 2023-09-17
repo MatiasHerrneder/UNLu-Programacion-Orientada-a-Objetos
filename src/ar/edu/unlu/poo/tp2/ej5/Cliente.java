@@ -105,7 +105,7 @@ public class Cliente {
     }
 
     public EstadoTransaccion restarSaldoDebito(float monto) {
-        if (getSaldo() > - getLimiteDeGiroEnDescubierto()) {
+        if (getSaldo() - monto > - getLimiteDeGiroEnDescubierto()) {
             setSaldo(getSaldo() - monto);
             if (getSaldo() > 0) {
                 return EstadoTransaccion.completada;
