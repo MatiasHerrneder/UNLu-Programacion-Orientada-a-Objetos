@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="b8380232-4352-401e-9535-b0be7d1a51fb" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ej9.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/Main.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/ar/edu/unlu/poo/tp2/ej9/d2/Circulo.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/ar/edu/unlu/poo/tp2/ej9/d2/Cuadrado.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/ar/edu/unlu/poo/tp2/ej9/d2/Figura2D.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/ar/edu/unlu/poo/tp2/ej9/d2/Rectangulo.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/ar/edu/unlu/poo/tp2/ej9/d2/Triangulo.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/ar/edu/unlu/poo/tp2/ej9/d3/Cubo.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/ar/edu/unlu/poo/tp2/ej9/d3/Esfera.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/ar/edu/unlu/poo/tp2/ej9/d3/Figura3D.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/ar/edu/unlu/poo/tp2/ej9/d3/Paralelepipedo.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/ar/edu/unlu/poo/tp2/ej9/d3/TetraedroRegular.java" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="ProjectColorInfo"><![CDATA[{
+  "associatedIndex": 3
+}]]></component>
+  <component name="ProjectId" id="2VokZSRYUEQTkubj7JppNf6Y3Su" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "git-widget-placeholder": "master"
+  }
+}]]></component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="b8380232-4352-401e-9535-b0be7d1a51fb" name="Changes" comment="" />
+      <created>1695509877202</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1695509877202</updated>
+    </task>
+    <servers />
+  </component>
+</project>
