@@ -26,23 +26,42 @@ public class Cuenta extends CajaDeAhorro {
     }
 
     public boolean gastar(double monto) {
-
+        if (monto > getSaldo() + getLimiteDeGiroDescubierto() - getGiroDescubierto()) {
+            if (monto <= getSaldo() + getInteresesAGanar() + getLimiteDeGiroDescubierto() - getGiroDescubierto()
+                    && isPrecancelarInversionAutomaticamente()) {
+                recuperarInversion();
+            }
+        }
+        if (monto <= getSaldo()) {
+            setSaldo(getSaldo() - monto);
+            return true;
+        }
+        else if (monto <= getSaldo() + getLimiteDeGiroDescubierto() - getGiroDescubierto()) {
+            setGiroDescubierto(getGiroDescubierto() + monto - getSaldo());
+            setSaldo(0);
+            return true;
+        }
+        else return false;
     }
 
     public boolean depositar(double monto) {
-
-    }
-
-    public boolean invertir(double monto) {
-
+        if (getGiroDescubierto() > 0) {
+            if (getGiroDescubierto() < monto){
+                setGiroDescubierto(0);
+                setSaldo(monto - getGiroDescubierto());
+            }
+            else {
+                setGiroDescubierto(getGiroDescubierto() - monto);
+            }
+        }
+        else setSaldo(getSaldo() + monto);
+        return true;
     }
 
     public boolean recuperarInversion() {
-
-    }
-
-    public double getInteresesAGanar() {
-
+        depositar(getInteresesAGanar());
+        setSaldoInvertido(0);
+        return true;
     }
 
 }

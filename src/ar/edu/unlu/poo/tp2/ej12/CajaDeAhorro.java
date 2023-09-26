@@ -8,6 +8,7 @@ public class CajaDeAhorro {
     private double saldoInvertido;
     private LocalDate fechaInversion;
     private int diasParaCobrarInversion;
+    private boolean precancelarInversionAutomaticamente = false;
 
     public CajaDeAhorro(double saldo) {
         setSaldo(saldo);
@@ -49,29 +50,58 @@ public class CajaDeAhorro {
         this.diasParaCobrarInversion = diasParaCobrarInversion;
     }
 
-    public boolean gastar(double monto) {
+    public boolean isPrecancelarInversionAutomaticamente() {
+        return precancelarInversionAutomaticamente;
+    }
 
+    public void setPrecancelarInversionAutomaticamente(boolean precancelarInversionAutomaticamente) {
+        this.precancelarInversionAutomaticamente = precancelarInversionAutomaticamente;
+    }
+
+    public boolean gastar(double monto) {
+        if (monto > getSaldo()) {
+            if (monto <= getSaldo() + getInteresesAGanar() && isPrecancelarInversionAutomaticamente()) {
+                recuperarInversion();
+            }
+        }
+        if (monto <= getSaldo()) {
+            setSaldo(getSaldo() - monto);
+            return true;
+        }
+        else return false;
     }
 
     public boolean depositar(double monto) {
-
+        setSaldo(getSaldo() + monto);
+        return true;
     }
 
     public boolean invertir(double monto, int diasParaCobrarInversion) {
-
+        if (monto <= getSaldo()) {
+            setSaldoInvertido(monto);
+            setSaldo(getSaldo() - monto);
+            setFechaInversion(LocalDate.now());
+            setDiasParaCobrarInversion(diasParaCobrarInversion);
+            return true;
+        }
+        else return false;
     }
 
     public boolean recuperarInversion() {
-
+        setSaldo(getSaldo() + getInteresesAGanar());
+        setSaldoInvertido(0);
+        return true;
     }
 
     public double getInteresesAGanar() {
-        if (!getFechaInversion().plusDays(getDiasParaCobrarInversion()).isBefore(LocalDate.now())) {
-            return getSaldoInvertido() * INTERES_POR_INVERSION;
+        if (getSaldoInvertido() <= 0) return 0;
+        if (getFechaInversion().plusDays(getDiasParaCobrarInversion()).isBefore(LocalDate.now())) {
+            return getSaldoInvertido() + getSaldoInvertido() * INTERES_POR_INVERSION;
         }
-        else if (!getFechaInversion().plusDays(30).isBefore(LocalDate.now())) {
-            return getSaldoInvertido() * 0.05;
+        else if (getFechaInversion().plusDays(30).isBefore(LocalDate.now())) {
+            return getSaldoInvertido() + getSaldoInvertido() * 0.05;
         }
         else return getSaldoInvertido();
     }
+
 }
