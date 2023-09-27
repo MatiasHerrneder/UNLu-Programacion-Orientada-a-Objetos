@@ -2,9 +2,9 @@ package ar.edu.unlu.poo.tp2.ej13.solNueva;
 
 public class Ticket {
     private Vuelo vuelo;
-    private Pasajero pasajero;
+    private Persona pasajero;
 
-    public Ticket(Vuelo vuelo, Pasajero pasajero) {
+    public Ticket(Vuelo vuelo, Persona pasajero) {
         setVuelo(vuelo);
         setPasajero(pasajero);
     }
@@ -17,11 +17,11 @@ public class Ticket {
         this.vuelo = vuelo;
     }
 
-    public Pasajero getPasajero() {
+    public Persona getPasajero() {
         return pasajero;
     }
 
-    public void setPasajero(Pasajero pasajero) {
+    public void setPasajero(Persona pasajero) {
         this.pasajero = pasajero;
     }
 }
