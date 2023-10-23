@@ -1,5 +1,7 @@
 package ar.edu.unlu.poo.tpIntegrador.modelo;
 
+import java.util.Objects;
+
 public class Coordenadas {
     private int posX;
     private int posY;
@@ -43,4 +45,27 @@ public class Coordenadas {
     public int getPosY() {
         return posY;
     }
+
+    public boolean isDentroDe(int min, int max) {
+        return getPosX() >= min && getPosX() <= max && getPosY() >= min && getPosY() <= max;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null || getClass() != obj.getClass()) {
+            return false;
+        }
+        Coordenadas x = (Coordenadas) obj;
+        return this.posY == x.posY && this.posX == (x.posX);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(posX, posY);
+    }
+
 }
+

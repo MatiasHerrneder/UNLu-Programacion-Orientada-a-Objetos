@@ -1,10 +1,12 @@
 package ar.edu.unlu.poo.tpIntegrador.modelo;
 
 public class Tablero {
-    private static final int TAMANIO = 10;
-    private final EstadoDisparo[][] posiciones = new EstadoDisparo[TAMANIO][TAMANIO];
+    private final EstadoDisparo[][] posiciones;
+    private final int tamanio;
 
-    public Tablero() {
+    public Tablero(int tamanio) {
+        this.tamanio = tamanio;
+        posiciones = new EstadoDisparo[tamanio][tamanio];
         inicializar();
     }
 
@@ -12,9 +14,13 @@ public class Tablero {
         return posiciones;
     }
 
+    public int getTamanio() {
+        return tamanio;
+    }
+
     private void inicializar() {
-        for (int i = 0; i < TAMANIO; i++) {
-            for (int j = 0; j < TAMANIO; j++) {
+        for (int i = 0; i < getTamanio(); i++) {
+            for (int j = 0; j < getTamanio(); j++) {
                 getPosiciones()[i][j] = EstadoDisparo.SIN_DISPARAR;
             }
         }
