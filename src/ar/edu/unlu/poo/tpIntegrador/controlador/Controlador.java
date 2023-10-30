@@ -22,15 +22,19 @@ public class Controlador implements IControladorRemoto {
     }
 
     public Controlador() {
-        this.usuario = new Usuario(1, "test", 1); //TODO cambiar este constructor?
+
     }
 
     public void setVista(IVista vista) {
         this.vista = vista;
     }
 
-    public void colocarBarco() {
-
+    public void colocarBarcos(IBarco[] barcos) {
+        try {
+            this.modelo.ponerBarcos((Usuario) this.usuario, (Barco[]) barcos);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
     }
 
     public void iniciarPartida() {
@@ -51,7 +55,7 @@ public class Controlador implements IControladorRemoto {
 
     public void disparar(Coordenadas posicion) {
         try {
-            modelo.disparar((Usuario) this.usuario, posicion);
+            this.modelo.disparar((Usuario) this.usuario, posicion);
         } catch (RemoteException e) {
             e.printStackTrace();
         }
@@ -59,7 +63,7 @@ public class Controlador implements IControladorRemoto {
 
     public ITablero getTablero() {
         try {
-            return modelo.getTablero((Usuario) usuario);
+            return this.modelo.getTablero((Usuario) usuario);
         } catch (RemoteException e) {
             e.printStackTrace();
         }
@@ -69,6 +73,7 @@ public class Controlador implements IControladorRemoto {
     public void conectarUsuario(String nombre) {
         try {
             this.usuario = (IUsuario) this.modelo.conectarUsuario(nombre);
+            if (this.usuario.isJugador(2)) modelo.iniciarPartida();
         } catch (RemoteException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -104,16 +109,32 @@ public class Controlador implements IControladorRemoto {
         if (o instanceof Eventos) {
             boolean esJ1 = this.usuario.isJugador(1);
             switch ((Eventos) o) {
-                case AGUA_J1 -> this.vista.mostrarDisparo(EstadoDisparo.AGUA, esJ1);
-                case AGUA_J2 -> this.vista.mostrarDisparo(EstadoDisparo.AGUA, !esJ1);
-                case GOLPEADO_J1 -> this.vista.mostrarDisparo(EstadoDisparo.GOLPEADO, esJ1);
-                case GOLPEADO_J2 -> this.vista.mostrarDisparo(EstadoDisparo.GOLPEADO, !esJ1);
-                case HUNDIDO_J1 -> this.vista.mostrarDisparo(EstadoDisparo.HUNDIDO, esJ1);
-                case HUNDIDO_J2 -> this.vista.mostrarDisparo(EstadoDisparo.HUNDIDO, !esJ1);
-                case COMENZAR_PARTIDA -> {
-                    this.vista.comienzoDePartida();
+                case AGUA_J1 -> {
+                    this.vista.mostrarDisparo(EstadoDisparo.AGUA, esJ1);
+                    this.vista.jugarTurno(!esJ1);
+                }
+                case AGUA_J2 -> {
+                    this.vista.mostrarDisparo(EstadoDisparo.AGUA, !esJ1);
                     this.vista.jugarTurno(esJ1);
                 }
+                case GOLPEADO_J1 -> {
+                    this.vista.mostrarDisparo(EstadoDisparo.GOLPEADO, esJ1);
+                    this.vista.jugarTurno(!esJ1);
+                }
+                case GOLPEADO_J2 -> {
+                    this.vista.mostrarDisparo(EstadoDisparo.GOLPEADO, !esJ1);
+                    this.vista.jugarTurno(esJ1);
+                }
+                case HUNDIDO_J1 -> {
+                    this.vista.mostrarDisparo(EstadoDisparo.HUNDIDO, esJ1);
+                    this.vista.jugarTurno(!esJ1);
+                }
+                case HUNDIDO_J2 -> {
+                    this.vista.mostrarDisparo(EstadoDisparo.HUNDIDO, !esJ1);
+                    this.vista.jugarTurno(esJ1);
+                }
+                case COLOCAR_BARCOS -> this.vista.colocarBarcos();
+                case COMENZAR_PARTIDA -> this.vista.jugarTurno(esJ1);
             }
         }
     }

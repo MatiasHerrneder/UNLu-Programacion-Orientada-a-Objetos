@@ -2,8 +2,8 @@ package ar.edu.unlu.poo.tpIntegrador.modelo;
 
 public class Jugador {
     private static final int TAMANIO_TABLERO = 10;
-    private final Barco[] barcos = new Barco[5];
-    private Tablero tablero;
+    private Barco[] barcos = null;
+    private final Tablero tablero;
     private int idUsuario = -1;
     private boolean listoParaComenzar = false;
 
@@ -19,7 +19,7 @@ public class Jugador {
         this.listoParaComenzar = true;
     }
 
-    public boolean hayUsuarioConectado () {
+    public boolean hayUsuarioConectado() {
         return this.idUsuario != -1;
     }
 
@@ -29,6 +29,10 @@ public class Jugador {
 
     public Barco[] getBarcos() {
         return barcos;
+    }
+
+    public void setBarcos(Barco[] barcos) {
+        this.barcos = barcos;
     }
 
     public Tablero getTablero() {

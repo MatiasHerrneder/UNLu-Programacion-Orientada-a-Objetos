@@ -1,6 +1,8 @@
 package ar.edu.unlu.poo.tpIntegrador.modelo;
 
-public class Barco {
+import java.io.Serializable;
+
+public class Barco implements IBarco, Serializable {
     private final Coordenadas posicionBarco;
     private final Direccion direccion;
     private final int largoDelBarco;

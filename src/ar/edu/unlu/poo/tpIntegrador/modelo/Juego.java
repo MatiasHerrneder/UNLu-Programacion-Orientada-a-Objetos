@@ -16,7 +16,7 @@ public class Juego extends ObservableRemoto implements IJuego {
     }
 
     public void iniciarPartida() throws RemoteException {
-        notificarObservadores(Eventos.COMENZAR_PARTIDA);
+        notificarObservadores(Eventos.COLOCAR_BARCOS);
     }
 
     private boolean esTurnoJugador(Jugador jugador) {
@@ -62,21 +62,39 @@ public class Juego extends ObservableRemoto implements IJuego {
     }
 
     @Override
-    public void jugadorListoParaComenzar(Usuario usuario) throws RemoteException {
+    public void ponerBarcos(Usuario usuario, Barco[] barcos) throws RemoteException {
+        if (usuario.isJugador(1)) {
+            jugador1.setBarcos(barcos);
+            if (jugador2.getBarcos() != null) {
+                notificarObservadores(Eventos.COMENZAR_PARTIDA);
+            }
+        }
+        else {
+            jugador2.setBarcos(barcos);
+            if (jugador1.getBarcos() != null) {
+                notificarObservadores(Eventos.COMENZAR_PARTIDA);
+            }
+        }
+    }
+
+    @Override
+    public void jugadorListoParaComenzar(Usuario usuario) throws RemoteException { //TODO SIN USO
         if (usuario.isJugador(1)) jugador1.setListoParaComenzar();
         else jugador2.setListoParaComenzar();
         if (jugador1.isListoParaComenzar() && jugador2.isListoParaComenzar()) {
-            notificarObservadores(Eventos.COMENZAR_PARTIDA);
+            notificarObservadores(Eventos.COLOCAR_BARCOS);
         }
     }
 
     @Override
     public Usuario conectarUsuario(String nombre) throws RemoteException {
         if (!jugador1.hayUsuarioConectado()) {
+            jugador1.setIdUsuario(1); //TODO
             return new Usuario(1, nombre, 1); //TODO ver ID
         }
         else if (!jugador2.hayUsuarioConectado()) {
-            return new Usuario(2, nombre, 2);
+            jugador2.setIdUsuario(2); //TODO
+            return new Usuario(2, nombre, 2); //TODO
         }
         else throw new RemoteException("Ya hay 2 jugadores concectados");
     }

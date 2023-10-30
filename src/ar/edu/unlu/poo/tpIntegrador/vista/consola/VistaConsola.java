@@ -22,10 +22,11 @@ public class VistaConsola implements IVista {
         System.out.println("Ingresa tu nombre: ");
         String nombre = scanner.nextLine();
         this.controlador.conectarUsuario(nombre);
+        //comienzoDePartida();
         //mostrarTablero();
     }
 
-    public void mostrarTablero() {
+    private void mostrarTablero() {
         final String letras = "ABCDEFGHIJKLMNÑOPQRSTUVWXYZ";
         ITablero tablero = controlador.getTablero();
         System.out.println("   |  1  |  2  |  3  |  4  |  5  |  6  |  7  |  8  |  9  |  10 |");
@@ -45,6 +46,43 @@ public class VistaConsola implements IVista {
             System.out.println(s);
             System.out.println("---|-----|-----|-----|-----|-----|-----|-----|-----|-----|-----|");
         }
+    }
+
+    private Coordenadas getCoordenadasDeTeclado() {
+        System.out.println("Ingrese coordenada X: ");
+        while (!scanner.hasNextInt()) {
+            System.out.println("Ingrese coordenada X: ");
+            scanner.next();
+        }
+        int x = scanner.nextInt() - 1;
+        System.out.println("Ingrese coordenada Y: ");
+        boolean inputCorrecto = false;
+        while (!inputCorrecto) {
+            if (scanner.hasNextInt()) {
+                int y = scanner.nextInt() - 1;
+                inputCorrecto = true;
+                try {
+                    return new Coordenadas(x, y);
+                } catch (Exception e) {
+                    System.out.println("Coordenadas invalidas");
+                    getCoordenadasDeTeclado();
+                }
+            }
+            else {
+                String input = scanner.nextLine();
+                if (input.length() == 1) {
+                    char y = input.charAt(0);
+                    inputCorrecto = true;
+                    try {
+                        return new Coordenadas(x, y);
+                    } catch (Exception e) {
+                        System.out.println("Coordenadas invalidas");
+                        getCoordenadasDeTeclado();
+                    }
+                }
+            }
+        }
+        return null;
     }
 
     @Override
@@ -69,39 +107,48 @@ public class VistaConsola implements IVista {
     @Override
     public void jugarTurno(boolean turnoPropio) {
         if (turnoPropio) {
-            System.out.println("Ingrese coordenada X: ");
-            while (!scanner.hasNextInt()) {
-                System.out.println("Ingrese coordenada X: ");
-            }
-            int x = scanner.nextInt();
-            System.out.println("Ingrese coordenada Y: ");
-            boolean inputCorrecto = false;
-            while (!inputCorrecto) {
-                if (scanner.hasNextInt()) {
-                    int y = scanner.nextInt();
-                    inputCorrecto = true;
-                    try {
-                        this.controlador.disparar(new Coordenadas(x, y));
-                    } catch (Exception e) {
-                        System.out.println("Coordenadas invalidas");
-                        jugarTurno(true);
-                    }
+            this.controlador.disparar(getCoordenadasDeTeclado());
+        }
+    }
+
+    @Override
+    public void colocarBarcos() {
+        IBarco[] barcos = new Barco[5];
+        barcos[0] = crearBarco(5);
+        barcos[1] = crearBarco(4);
+        barcos[2] = crearBarco(3);
+        barcos[3] = crearBarco(3);
+        barcos[4] = crearBarco(2);
+        this.controlador.colocarBarcos(barcos);
+    }
+
+    private IBarco crearBarco(int largo) {
+        System.out.println("Ingresar posicion de barco de largo " + largo);
+        Coordenadas pos = getCoordenadasDeTeclado();
+        System.out.println("Ingresar direccion en la que va el barco desde su posicion inicial ([N]orte, [S]ur, [E]ste, [O]este)");
+        boolean direccionValida = false;
+        Direccion dir = null;
+        while (!direccionValida) {
+            switch (scanner.nextLine()) {
+                case "N" -> {
+                    dir = Direccion.ARRIBA;
+                    direccionValida = true;
                 }
-                else {
-                    String input = scanner.nextLine();
-                    if (input.length() == 1) {
-                        char y = input.charAt(0);
-                        inputCorrecto = true;
-                        try {
-                            this.controlador.disparar(new Coordenadas(x, y));
-                        } catch (Exception e) {
-                            System.out.println("Coordenadas invalidas");
-                            jugarTurno(true);
-                        }
-                    }
+                case "S" -> {
+                    dir = Direccion.ABAJO;
+                    direccionValida = true;
+                }
+                case "E" -> {
+                    dir = Direccion.DERECHA;
+                    direccionValida = true;
+                }
+                case "O" -> {
+                    dir = Direccion.IZQUIERDA;
+                    direccionValida = true;
                 }
             }
         }
+        return new Barco(pos,  dir, largo);
     }
 
     @Override

@@ -8,6 +8,7 @@ import java.rmi.RemoteException;
 public interface IJuego extends IObservableRemoto {
     ITablero getTablero(Usuario usuario) throws RemoteException;
     void disparar(Usuario usuario, Coordenadas posicion) throws RemoteException;
+    void ponerBarcos(Usuario usuario, Barco[] barcos) throws RemoteException;
     void jugadorListoParaComenzar(Usuario usuario) throws RemoteException;
     void iniciarPartida() throws RemoteException;
     Usuario conectarUsuario(String nombre) throws RemoteException;

@@ -7,5 +7,6 @@ public enum Eventos {
     HUNDIDO_J2,
     GOLPEADO_J2,
     AGUA_J2,
+    COLOCAR_BARCOS,
     COMENZAR_PARTIDA,
 }
