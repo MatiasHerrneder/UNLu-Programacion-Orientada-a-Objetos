@@ -4,9 +4,27 @@ public class Jugador {
     private static final int TAMANIO_TABLERO = 10;
     private final Barco[] barcos = new Barco[5];
     private Tablero tablero;
+    private int idUsuario = -1;
+    private boolean listoParaComenzar = false;
 
     public Jugador() {
         tablero = new Tablero(TAMANIO_TABLERO);
+    }
+
+    public boolean isListoParaComenzar() {
+        return listoParaComenzar;
+    }
+
+    public void setListoParaComenzar() {
+        this.listoParaComenzar = true;
+    }
+
+    public boolean hayUsuarioConectado () {
+        return this.idUsuario != -1;
+    }
+
+    public void setIdUsuario(int idUsuario) {
+        this.idUsuario = idUsuario;
     }
 
     public Barco[] getBarcos() {

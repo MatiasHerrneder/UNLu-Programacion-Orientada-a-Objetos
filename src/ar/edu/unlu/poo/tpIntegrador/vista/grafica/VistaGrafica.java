@@ -28,4 +28,14 @@ public class VistaGrafica implements IVista {
     public void mostrarDisparo(EstadoDisparo estado, boolean disparoFuePropio) {
 
     }
+
+    @Override
+    public void jugarTurno(boolean turnoPropio) {
+
+    }
+
+    @Override
+    public void comienzoDePartida() {
+
+    }
 }

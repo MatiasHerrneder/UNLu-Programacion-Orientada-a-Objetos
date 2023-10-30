@@ -10,6 +10,14 @@ public class Juego extends ObservableRemoto implements IJuego {
     private Jugador jugador2;
     private int turno = 0;
 
+    public Juego() {
+        this.jugador1 = new Jugador();
+        this.jugador2 = new Jugador();
+    }
+
+    public void iniciarPartida() throws RemoteException {
+        notificarObservadores(Eventos.COMENZAR_PARTIDA);
+    }
 
     private boolean esTurnoJugador(Jugador jugador) {
         return turno % 2 == 0 && jugador == this.jugador1 || turno % 2 == 1 && jugador == this.jugador2;
@@ -54,13 +62,23 @@ public class Juego extends ObservableRemoto implements IJuego {
     }
 
     @Override
-    public void agregarJugador() {
-
+    public void jugadorListoParaComenzar(Usuario usuario) throws RemoteException {
+        if (usuario.isJugador(1)) jugador1.setListoParaComenzar();
+        else jugador2.setListoParaComenzar();
+        if (jugador1.isListoParaComenzar() && jugador2.isListoParaComenzar()) {
+            notificarObservadores(Eventos.COMENZAR_PARTIDA);
+        }
     }
 
     @Override
     public Usuario conectarUsuario(String nombre) throws RemoteException {
-        return null;
+        if (!jugador1.hayUsuarioConectado()) {
+            return new Usuario(1, nombre, 1); //TODO ver ID
+        }
+        else if (!jugador2.hayUsuarioConectado()) {
+            return new Usuario(2, nombre, 2);
+        }
+        else throw new RemoteException("Ya hay 2 jugadores concectados");
     }
 
     @Override

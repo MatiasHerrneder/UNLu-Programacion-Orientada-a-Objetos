@@ -22,7 +22,7 @@ public class Controlador implements IControladorRemoto {
     }
 
     public Controlador() {
-        this.usuario = new Usuario(1, "test", 1);
+        this.usuario = new Usuario(1, "test", 1); //TODO cambiar este constructor?
     }
 
     public void setVista(IVista vista) {
@@ -31,6 +31,22 @@ public class Controlador implements IControladorRemoto {
 
     public void colocarBarco() {
 
+    }
+
+    public void iniciarPartida() {
+        try {
+            this.modelo.iniciarPartida();
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void listoParaComenzarPartida() {
+        try {
+            this.modelo.jugadorListoParaComenzar((Usuario) this.usuario);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
     }
 
     public void disparar(Coordenadas posicion) {
@@ -53,8 +69,6 @@ public class Controlador implements IControladorRemoto {
     public void conectarUsuario(String nombre) {
         try {
             this.usuario = (IUsuario) this.modelo.conectarUsuario(nombre);
-//            this.vista.mostrarListaUsuarios((IUsuario[]) this.modelo.getUsuarios());
-//            this.vista.mostrarChat((IMensaje[]) this.modelo.getMensajes());
         } catch (RemoteException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -88,14 +102,18 @@ public class Controlador implements IControladorRemoto {
     @Override
     public void actualizar(IObservableRemoto observable, Object o) throws RemoteException {
         if (o instanceof Eventos) {
-            boolean disparoJ1 = this.usuario.isJugador(1);
+            boolean esJ1 = this.usuario.isJugador(1);
             switch ((Eventos) o) {
-                case AGUA_J1 -> this.vista.mostrarDisparo(EstadoDisparo.AGUA, disparoJ1);
-                case AGUA_J2 -> this.vista.mostrarDisparo(EstadoDisparo.AGUA, !disparoJ1);
-                case GOLPEADO_J1 -> this.vista.mostrarDisparo(EstadoDisparo.GOLPEADO, disparoJ1);
-                case GOLPEADO_J2 -> this.vista.mostrarDisparo(EstadoDisparo.GOLPEADO, !disparoJ1);
-                case HUNDIDO_J1 -> this.vista.mostrarDisparo(EstadoDisparo.HUNDIDO, disparoJ1);
-                case HUNDIDO_J2 -> this.vista.mostrarDisparo(EstadoDisparo.HUNDIDO, !disparoJ1);
+                case AGUA_J1 -> this.vista.mostrarDisparo(EstadoDisparo.AGUA, esJ1);
+                case AGUA_J2 -> this.vista.mostrarDisparo(EstadoDisparo.AGUA, !esJ1);
+                case GOLPEADO_J1 -> this.vista.mostrarDisparo(EstadoDisparo.GOLPEADO, esJ1);
+                case GOLPEADO_J2 -> this.vista.mostrarDisparo(EstadoDisparo.GOLPEADO, !esJ1);
+                case HUNDIDO_J1 -> this.vista.mostrarDisparo(EstadoDisparo.HUNDIDO, esJ1);
+                case HUNDIDO_J2 -> this.vista.mostrarDisparo(EstadoDisparo.HUNDIDO, !esJ1);
+                case COMENZAR_PARTIDA -> {
+                    this.vista.comienzoDePartida();
+                    this.vista.jugarTurno(esJ1);
+                }
             }
         }
     }

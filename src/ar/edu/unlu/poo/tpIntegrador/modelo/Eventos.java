@@ -6,5 +6,6 @@ public enum Eventos {
     AGUA_J1,
     HUNDIDO_J2,
     GOLPEADO_J2,
-    AGUA_J2
+    AGUA_J2,
+    COMENZAR_PARTIDA,
 }
