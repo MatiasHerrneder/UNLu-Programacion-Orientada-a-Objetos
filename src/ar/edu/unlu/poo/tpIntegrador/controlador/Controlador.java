@@ -22,7 +22,7 @@ public class Controlador implements IControladorRemoto {
     }
 
     public Controlador() {
-
+        this.usuario = new Usuario(1, "test", 1);
     }
 
     public void setVista(IVista vista) {

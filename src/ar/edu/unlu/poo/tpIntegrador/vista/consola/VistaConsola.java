@@ -2,6 +2,7 @@ package ar.edu.unlu.poo.tpIntegrador.vista.consola;
 
 import ar.edu.unlu.poo.tpIntegrador.controlador.Controlador;
 import ar.edu.unlu.poo.tpIntegrador.modelo.EstadoDisparo;
+import ar.edu.unlu.poo.tpIntegrador.modelo.ITablero;
 import ar.edu.unlu.poo.tpIntegrador.vista.IVista;
 
 
@@ -18,9 +19,9 @@ public class VistaConsola implements IVista {
     }
 
     public void mostrarTablero() {
-        EstadoDisparo[][] tablero = controlador.getTablero().getTablero();
+        ITablero tablero = controlador.getTablero();
         System.out.println("|-----|-----|-----|-----|-----|-----|-----|-----|-----|-----|");
-        for (EstadoDisparo[] fila : tablero) {
+        for (EstadoDisparo[] fila : tablero.getTablero()) {
             StringBuilder s = new StringBuilder("| ");
             for (EstadoDisparo columna : fila) {
                 switch (columna) {

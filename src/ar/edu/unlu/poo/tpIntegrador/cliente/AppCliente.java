@@ -3,6 +3,7 @@ package ar.edu.unlu.poo.tpIntegrador.cliente;
 import ar.edu.unlu.poo.tpIntegrador.controlador.Controlador;
 import ar.edu.unlu.poo.tpIntegrador.vista.IVista;
 import ar.edu.unlu.poo.tpIntegrador.vista.consola.VistaConsola;
+import ar.edu.unlu.poo.tpIntegrador.vista.grafica.VistaGrafica;
 import ar.edu.unlu.rmimvc.RMIMVCException;
 import ar.edu.unlu.rmimvc.Util;
 import ar.edu.unlu.rmimvc.cliente.Cliente;
@@ -36,7 +37,7 @@ public class AppCliente {
                 JOptionPane.QUESTION_MESSAGE,
                 null,
                 null,
-                null
+                "127.0.0.1"
         );
         String portServidor = (String) JOptionPane.showInputDialog(
                 null,
@@ -49,7 +50,6 @@ public class AppCliente {
         Controlador controlador = new Controlador();
         IVista vista = new VistaConsola(controlador);
         Cliente c = new Cliente(ip, Integer.parseInt(port), ipServidor, Integer.parseInt(portServidor));
-        vista.iniciar();
         try {
             c.iniciar(controlador);
         } catch (RemoteException e) {
@@ -59,5 +59,6 @@ public class AppCliente {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
+        vista.iniciar();
     }
 }

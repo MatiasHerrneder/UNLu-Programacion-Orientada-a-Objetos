@@ -8,28 +8,20 @@ import javax.swing.*;
 
 public class VistaGrafica implements IVista {
     private Controlador controlador;
-    private JFrame frame;
+    private VentanaPrincipal ventanaPrincipal;
 
     public VistaGrafica(Controlador controlador) {
         this.controlador = controlador;
+        controlador.setVista(this);
     }
 
     public void iniciar() {
-        VentanaPrincipal ventanaPrincipal = new VentanaPrincipal(this.controlador);
+        this.ventanaPrincipal = new VentanaPrincipal(this.controlador);
+        this.ventanaPrincipal.setVisible(true);
     }
 
     public void mostrarTablero() {
 
-    }
-
-    private EstadoDisparo[][] test() {
-        EstadoDisparo[][] res = new EstadoDisparo[10][10];
-        for (int i = 0; i < 10; i++) {
-            for (int j = 0; j < 10; j++) {
-                res[i][j] = EstadoDisparo.SIN_DISPARAR;
-            }
-        }
-        return res;
     }
 
     @Override
