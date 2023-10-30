@@ -29,8 +29,18 @@ public class Barco {
         return golpes;
     }
 
-    public void golpearBarco(Disparo disparo) {
-
+    public EstadoDisparo golpearBarco(Coordenadas coordenadas) {
+        Coordenadas pos = getPosicionBarco();
+        for (int i = 0; i < getLargoDelBarco(); i++) {
+            if (coordenadas.equals(pos)) {
+                getGolpes()[i] = true;
+                for (boolean golpe : getGolpes()) {
+                    if (!golpe) return EstadoDisparo.GOLPEADO;
+                }
+                return EstadoDisparo.HUNDIDO;
+            }
+        }
+        return EstadoDisparo.AGUA;
     }
 
     public boolean isPosicionesValidas(int tamanioTablero, Barco[] barcos) {

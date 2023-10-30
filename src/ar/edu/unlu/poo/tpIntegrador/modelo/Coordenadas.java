@@ -1,8 +1,12 @@
 package ar.edu.unlu.poo.tpIntegrador.modelo;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.util.Objects;
 
-public class Coordenadas {
+public class Coordenadas implements Serializable {
+    @Serial
+    private static final long serialVersionUID = 10020000L;
     private int posX;
     private int posY;
 

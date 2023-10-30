@@ -1,6 +1,11 @@
 package ar.edu.unlu.poo.tpIntegrador.modelo;
 
-public class Tablero {
+import java.io.Serial;
+import java.io.Serializable;
+
+public class Tablero implements ITablero, Serializable {
+    @Serial
+    private static final long serialVersionUID = 10000000L;
     private final EstadoDisparo[][] posiciones;
     private final int tamanio;
 
@@ -11,6 +16,11 @@ public class Tablero {
     }
 
     private EstadoDisparo[][] getPosiciones() {
+        return posiciones;
+    }
+
+    @Override
+    public EstadoDisparo[][] getTablero() {
         return posiciones;
     }
 

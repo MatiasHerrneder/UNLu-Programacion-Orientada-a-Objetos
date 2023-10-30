@@ -13,20 +13,34 @@ public class Jugador {
         return barcos;
     }
 
-    public void disparar(Disparo disparo) {
+    public Tablero getTablero() {
+        return tablero;
+    }
+
+    public void marcarDisparo(Disparo disparo) {
         tablero.marcarDisparo(disparo);
     }
 
-    public boolean ponerBarco(Barco barco) {
-        if (barco.isPosicionesValidas(TAMANIO_TABLERO, getBarcos())) {
-
-            if (barco.tamanioDelBarco() == 2) {
-                if (barcos[0] != null) {
-                    ;
-                }
-                else return false;
+    public EstadoDisparo verificarDisparoRival(Coordenadas coordenadas) {
+        for (Barco b : getBarcos()) {
+            EstadoDisparo estadoDisparo = b.golpearBarco(coordenadas);
+            if (estadoDisparo != EstadoDisparo.AGUA) {
+                return estadoDisparo;
             }
         }
+        return EstadoDisparo.AGUA;
     }
+
+//    public boolean ponerBarco(Barco barco) {
+//        if (barco.isPosicionesValidas(TAMANIO_TABLERO, getBarcos())) {
+//
+//            if (barco.tamanioDelBarco() == 2) {
+//                if (barcos[0] != null) {
+//                    ;
+//                }
+//                else return false;
+//            }
+//        }
+//    }
 
 } 
