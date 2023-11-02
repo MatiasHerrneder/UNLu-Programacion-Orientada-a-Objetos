@@ -8,6 +8,7 @@ import javax.swing.*;
 
 public class VistaGrafica implements IVista {
     private Controlador controlador;
+    private VentanaDeConexion ventanaDeConexion;
     private VentanaPrincipal ventanaPrincipal;
 
     public VistaGrafica(Controlador controlador) {
@@ -16,8 +17,8 @@ public class VistaGrafica implements IVista {
     }
 
     public void iniciar() {
-        this.ventanaPrincipal = new VentanaPrincipal(this.controlador);
-        this.ventanaPrincipal.setVisible(true);
+        this.ventanaDeConexion = new VentanaDeConexion(this.controlador);
+        this.ventanaDeConexion.setVisible(true);
     }
 
     public void mostrarTablero() {
@@ -35,12 +36,13 @@ public class VistaGrafica implements IVista {
     }
 
     @Override
-    public void colocarBarcos() {
-
+    public void colocarBarcos() { //primero que se ejecuta
+        this.ventanaPrincipal = new VentanaPrincipal(this.controlador);
+        this.ventanaPrincipal.setVisible(true);
     }
 
     @Override
-    public void comienzoDePartida() {
+    public void comienzoDePartida() { //se ejecuta una vez colocados los barcos
 
     }
 }

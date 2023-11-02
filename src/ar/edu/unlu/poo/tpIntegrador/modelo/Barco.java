@@ -3,8 +3,8 @@ package ar.edu.unlu.poo.tpIntegrador.modelo;
 import java.io.Serializable;
 
 public class Barco implements IBarco, Serializable {
-    private final Coordenadas posicionBarco;
-    private final Direccion direccion;
+    private Coordenadas posicionBarco;
+    private Direccion direccion;
     private final int largoDelBarco;
     private final boolean[] golpes;
 
@@ -25,6 +25,16 @@ public class Barco implements IBarco, Serializable {
 
     public int getLargoDelBarco() {
         return largoDelBarco;
+    }
+
+    @Override
+    public void setDireccion(Direccion direccion) {
+        this.direccion = direccion;
+    }
+
+    @Override
+    public void setPosicion(Coordenadas posicion) {
+        this.posicionBarco = posicion;
     }
 
     public boolean[] getGolpes() {
@@ -80,7 +90,7 @@ public class Barco implements IBarco, Serializable {
         return true;
     }
 
-    private Coordenadas colaDelBarco() throws Exception {
+    public Coordenadas colaDelBarco() throws Exception {
         return switch (getDireccion()) {
             case ABAJO -> new Coordenadas(getPosicionBarco().getPosX(),
                     getPosicionBarco().getPosY() + getLargoDelBarco() - 1);
@@ -93,7 +103,7 @@ public class Barco implements IBarco, Serializable {
         };
     }
 
-    private Coordenadas siguienteCoordenada(Coordenadas coordenadas) throws Exception {
+    public Coordenadas siguienteCoordenada(Coordenadas coordenadas) throws Exception {
         return switch (getDireccion()) {
             case ABAJO -> new Coordenadas(coordenadas.getPosX(), coordenadas.getPosY() + 1);
             case ARRIBA -> new Coordenadas(coordenadas.getPosX(), coordenadas.getPosY() - 1);
