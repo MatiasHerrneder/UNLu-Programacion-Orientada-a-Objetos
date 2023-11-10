@@ -1,6 +1,7 @@
 package ar.edu.unlu.poo.tpIntegrador.modelo.clases;
 
 import ar.edu.unlu.poo.tpIntegrador.modelo.enumerados.EstadoDisparo;
+import ar.edu.unlu.poo.tpIntegrador.modelo.excepciones.CasillaYaDisparada;
 import ar.edu.unlu.poo.tpIntegrador.modelo.excepciones.PosicionDeBarcosInvalida;
 
 public class Jugador {
@@ -59,6 +60,13 @@ public class Jugador {
             }
         }
         return EstadoDisparo.AGUA;
+    }
+
+    public boolean todosLosBarcosHundidos() {
+        for (Barco barco : barcos) {
+            if (!barco.fueHundido()) return false;
+        }
+        return true;
     }
 
 //    public boolean ponerBarco(Barco barco) {

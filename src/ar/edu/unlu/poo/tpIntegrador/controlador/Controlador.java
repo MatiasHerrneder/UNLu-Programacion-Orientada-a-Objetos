@@ -7,6 +7,8 @@ import ar.edu.unlu.poo.tpIntegrador.modelo.clases.Coordenadas;
 import ar.edu.unlu.poo.tpIntegrador.modelo.clases.Usuario;
 import ar.edu.unlu.poo.tpIntegrador.modelo.enumerados.EstadoDisparo;
 import ar.edu.unlu.poo.tpIntegrador.modelo.enumerados.Eventos;
+import ar.edu.unlu.poo.tpIntegrador.modelo.excepciones.CasillaYaDisparada;
+import ar.edu.unlu.poo.tpIntegrador.modelo.excepciones.JugadoresYaConectados;
 import ar.edu.unlu.poo.tpIntegrador.modelo.excepciones.NoEsTurnoDelJugador;
 import ar.edu.unlu.poo.tpIntegrador.modelo.excepciones.PosicionDeBarcosInvalida;
 import ar.edu.unlu.poo.tpIntegrador.modelo.interfaces.IBarco;
@@ -68,7 +70,7 @@ public class Controlador implements IControladorRemoto {
         }
     }
 
-    public void disparar(Coordenadas posicion) throws NoEsTurnoDelJugador {
+    public void disparar(Coordenadas posicion) throws NoEsTurnoDelJugador, CasillaYaDisparada {
         try {
             this.modelo.disparar((Usuario) this.usuario, posicion);
         } catch (RemoteException e) {
@@ -85,7 +87,7 @@ public class Controlador implements IControladorRemoto {
         return null;
     }
 
-    public void conectarUsuario(String nombre) {
+    public void conectarUsuario(String nombre) throws JugadoresYaConectados {
         try {
             this.usuario = (IUsuario) this.modelo.conectarUsuario(nombre);
             if (this.usuario.isJugador(2)) modelo.iniciarPartida();
@@ -112,6 +114,10 @@ public class Controlador implements IControladorRemoto {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
+    }
+
+    public void voverAJugar() throws RemoteException {
+        modelo.iniciarPartida();
     }
 
     @Override

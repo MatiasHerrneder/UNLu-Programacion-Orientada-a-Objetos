@@ -4,6 +4,8 @@ import ar.edu.unlu.poo.tpIntegrador.controlador.Controlador;
 import ar.edu.unlu.poo.tpIntegrador.modelo.clases.Barco;
 import ar.edu.unlu.poo.tpIntegrador.modelo.clases.Coordenadas;
 import ar.edu.unlu.poo.tpIntegrador.modelo.enumerados.Direccion;
+import ar.edu.unlu.poo.tpIntegrador.modelo.enumerados.EstadoDisparo;
+import ar.edu.unlu.poo.tpIntegrador.modelo.excepciones.CasillaYaDisparada;
 import ar.edu.unlu.poo.tpIntegrador.modelo.excepciones.CoordenadaInvalida;
 import ar.edu.unlu.poo.tpIntegrador.modelo.excepciones.NoEsTurnoDelJugador;
 import ar.edu.unlu.poo.tpIntegrador.modelo.excepciones.PosicionDeBarcosInvalida;
@@ -25,6 +27,7 @@ public class VentanaPrincipal extends JFrame {
     KeyListener flechas;
     JButton bColocarBarco;
     JButton bGirarBarco;
+    JLabel msg;
             
     public VentanaPrincipal(Controlador controlador) {
         this.controlador = controlador;
@@ -42,6 +45,7 @@ public class VentanaPrincipal extends JFrame {
         menuB1.add(menuB1B1);
         menu.add(menuB1);
         setJMenuBar(menu);
+
         //creo mi grilla de juego
         panelPrincipal.add(crearPanelGrilla(), BorderLayout.CENTER);
         //barcos
@@ -63,9 +67,11 @@ public class VentanaPrincipal extends JFrame {
                 casillas[i][j].addActionListener(e -> {
                     try {
                         controlador.disparar(new Coordenadas(finalI, finalJ));
+//                        mostrarMensaje("Turno del rival");
+                    } catch (NoEsTurnoDelJugador | CasillaYaDisparada ignored) {
                     } catch (CoordenadaInvalida ex) {
                         ex.printStackTrace();
-                    } catch (NoEsTurnoDelJugador ignored) {}
+                    }
                     panelPrincipal.requestFocus();
                 });
             }
@@ -112,9 +118,9 @@ public class VentanaPrincipal extends JFrame {
                 }
 
                 try {
-                    if (!barcoAColocar.colaDelBarco().isDentroDe(0, tablero.getTamanio() - 1) || !barcoAColocar.getPosicionBarco().isDentroDe(0, tablero.getTamanio() - 1)) barcoAColocar.setPosicion(viejaPos); //TODO se va de la pantalla si lo pongo al reves
-                } catch (Exception ex) {
-                    ex.printStackTrace();
+                    if (!barcoAColocar.colaDelBarco().isDentroDe(0, tablero.getTamanio() - 1) || !barcoAColocar.getPosicionBarco().isDentroDe(0, tablero.getTamanio() - 1)) barcoAColocar.setPosicion(viejaPos);
+                } catch (CoordenadaInvalida ex) {
+                    barcoAColocar.setPosicion(viejaPos);
                 }
                 mostrarBarcoAColocar();
             }
@@ -148,8 +154,11 @@ public class VentanaPrincipal extends JFrame {
         panelPrincipal.remove(bColocarBarco);
         panelPrincipal.remove(bGirarBarco);
         pintarCasillasAgua();
-        panelPrincipal.revalidate();
-        panelPrincipal.repaint();
+//        panelPrincipal.revalidate();
+//        panelPrincipal.repaint();
+
+        msg = new JLabel("");
+        panelPrincipal.add(msg, BorderLayout.NORTH);
     }
 
     public void crearBarcos() {
@@ -203,8 +212,7 @@ public class VentanaPrincipal extends JFrame {
                 casillas[pos.getPosX()][pos.getPosY()].setBackground(Color.BLACK);
                 try {
                     pos = barcoAColocar.siguienteCoordenada(pos);
-                } catch (CoordenadaInvalida e) {
-                    e.printStackTrace();
+                } catch (CoordenadaInvalida ignored) {
                 }
             }
         }
@@ -242,11 +250,19 @@ public class VentanaPrincipal extends JFrame {
     }
 
     public void jugarTurno() {
-        JOptionPane.showMessageDialog(panelPrincipal, "Tu turno", "Information", JOptionPane.INFORMATION_MESSAGE);
+//        JOptionPane.showMessageDialog(panelPrincipal, "Tu turno", "Information", JOptionPane.INFORMATION_MESSAGE);
+        mostrarMensaje("Tu turno");
+    }
+
+    public void mostrarTablero(EstadoDisparo estadoDisparo, boolean disparoFuePropio) {
+        mostrarTablero();
+        if (disparoFuePropio) {
+            mostrarMensaje(estadoDisparo.toString());
+        }
     }
 
     public void mostrarTablero() {
-        ITablero tablero = controlador.getTablero(); //TODO esta mal el tablero que trae de por si
+        ITablero tablero = controlador.getTablero();
         for (int i = 0; i < casillas.length; i++) {
             for (int j = 0; j < casillas[i].length; j++) {
                 switch (tablero.getEstadoPos(i, j)) {
@@ -256,6 +272,18 @@ public class VentanaPrincipal extends JFrame {
                 }
             }
         }
+    }
+
+    public void finDeLaPartida(boolean ganada) {
+        mostrarTablero();
+//        if (ganada) JOptionPane.showMessageDialog(panelPrincipal, "GANASTE", "Fin de la partida", JOptionPane.INFORMATION_MESSAGE);
+//        else JOptionPane.showMessageDialog(panelPrincipal, "PERDISTE", "Fin de la partida", JOptionPane.INFORMATION_MESSAGE);
+        if (ganada) mostrarMensaje("GANASTE");
+        else mostrarMensaje("PERDISTE");
+    }
+
+    private void mostrarMensaje(String mensaje) {
+        msg.setText(mensaje);
     }
 
     public void panelPrincipal() {

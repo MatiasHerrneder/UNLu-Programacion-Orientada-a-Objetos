@@ -2,6 +2,8 @@ package ar.edu.unlu.poo.tpIntegrador.modelo.clases;
 
 import ar.edu.unlu.poo.tpIntegrador.modelo.enumerados.EstadoDisparo;
 import ar.edu.unlu.poo.tpIntegrador.modelo.enumerados.Eventos;
+import ar.edu.unlu.poo.tpIntegrador.modelo.excepciones.CasillaYaDisparada;
+import ar.edu.unlu.poo.tpIntegrador.modelo.excepciones.JugadoresYaConectados;
 import ar.edu.unlu.poo.tpIntegrador.modelo.excepciones.NoEsTurnoDelJugador;
 import ar.edu.unlu.poo.tpIntegrador.modelo.excepciones.PosicionDeBarcosInvalida;
 import ar.edu.unlu.poo.tpIntegrador.modelo.interfaces.IJuego;
@@ -37,7 +39,7 @@ public class Juego extends ObservableRemoto implements IJuego {
     }
 
     @Override
-    public void disparar(Usuario usuario, Coordenadas posicion) throws RemoteException, NoEsTurnoDelJugador {
+    public void disparar(Usuario usuario, Coordenadas posicion) throws RemoteException, NoEsTurnoDelJugador, CasillaYaDisparada {
         Jugador jugadorQueDispara;
         Jugador jugadorQueResponde;
         if (usuario.isJugador(1)) {
@@ -48,17 +50,21 @@ public class Juego extends ObservableRemoto implements IJuego {
             jugadorQueDispara = jugador2;
             jugadorQueResponde = jugador1;
         }
-        if (esTurnoJugador(jugadorQueDispara)) {
-            turno++;
-            EstadoDisparo estadoDisparo = jugadorQueResponde.verificarDisparoRival(posicion);
-            jugadorQueDispara.marcarDisparo(new Disparo(posicion, estadoDisparo));
-            switch (estadoDisparo) {
-                case AGUA-> this.notificarObservadores(new EventoSegunJugador(Eventos.AGUA, usuario));
-                case GOLPEADO -> this.notificarObservadores(new EventoSegunJugador(Eventos.GOLPEADO, usuario));
-                case HUNDIDO -> this.notificarObservadores(new EventoSegunJugador(Eventos.HUNDIDO, usuario));
+
+        if (!esTurnoJugador(jugadorQueDispara)) throw new NoEsTurnoDelJugador();
+        if (jugadorQueDispara.getTablero().getEstadoPos(posicion.getPosX(), posicion.getPosY()) != EstadoDisparo.SIN_DISPARAR) throw new CasillaYaDisparada();
+
+        EstadoDisparo estadoDisparo = jugadorQueResponde.verificarDisparoRival(posicion);
+        jugadorQueDispara.marcarDisparo(new Disparo(posicion, estadoDisparo));
+        switch (estadoDisparo) {
+            case AGUA-> this.notificarObservadores(new EventoSegunJugador(Eventos.AGUA, usuario));
+            case GOLPEADO -> this.notificarObservadores(new EventoSegunJugador(Eventos.GOLPEADO, usuario));
+            case HUNDIDO -> {
+                if (jugadorQueResponde.todosLosBarcosHundidos()) this.notificarObservadores(new EventoSegunJugador(Eventos.VICTORIA, usuario));
+                else this.notificarObservadores(new EventoSegunJugador(Eventos.HUNDIDO, usuario));
             }
         }
-        else throw new NoEsTurnoDelJugador();
+        turno++;
     }
 
     @Override
@@ -89,7 +95,7 @@ public class Juego extends ObservableRemoto implements IJuego {
     }
 
     @Override
-    public Usuario conectarUsuario(String nombre) throws RemoteException {
+    public Usuario conectarUsuario(String nombre) throws RemoteException, JugadoresYaConectados {
         if (!jugador1.hayUsuarioConectado()) {
             jugador1.setIdUsuario(1); //TODO
             return new Usuario(1, nombre, 1); //TODO ver ID
@@ -98,7 +104,7 @@ public class Juego extends ObservableRemoto implements IJuego {
             jugador2.setIdUsuario(2); //TODO
             return new Usuario(2, nombre, 2); //TODO
         }
-        else throw new RemoteException("Ya hay 2 jugadores concectados");
+        else throw new JugadoresYaConectados();
     }
 
     @Override

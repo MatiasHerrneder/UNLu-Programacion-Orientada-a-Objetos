@@ -4,10 +4,15 @@ import ar.edu.unlu.poo.tpIntegrador.controlador.Controlador;
 import ar.edu.unlu.poo.tpIntegrador.modelo.enumerados.EstadoDisparo;
 import ar.edu.unlu.poo.tpIntegrador.vista.IVista;
 
+import javax.swing.*;
+import java.awt.*;
+
 public class VistaGrafica implements IVista {
     private Controlador controlador;
+    private JFrame frameRaiz;
     private VentanaDeConexion ventanaDeConexion;
     private VentanaPrincipal ventanaPrincipal;
+    private VentanaFinal ventanaFinal;
 
     public VistaGrafica(Controlador controlador) {
         this.controlador = controlador;
@@ -15,8 +20,12 @@ public class VistaGrafica implements IVista {
     }
 
     public void iniciar() {
-        this.ventanaDeConexion = new VentanaDeConexion(this.controlador);
-        this.ventanaDeConexion.setVisible(true);
+//        frameRaiz = new JFrame();
+//        frameRaiz.setLayout(new FlowLayout());
+//        frameRaiz.setVisible(true);
+        ventanaDeConexion = new VentanaDeConexion(this.controlador);
+        ventanaDeConexion.setVisible(true);
+//        frameRaiz.add(ventanaDeConexion);
     }
 
     public void mostrarTablero() {
@@ -25,7 +34,7 @@ public class VistaGrafica implements IVista {
 
     @Override
     public void mostrarDisparo(EstadoDisparo estado, boolean disparoFuePropio) {
-        ventanaPrincipal.mostrarTablero();
+        ventanaPrincipal.mostrarTablero(estado, disparoFuePropio);
     }
 
     @Override
@@ -46,6 +55,8 @@ public class VistaGrafica implements IVista {
 
     @Override
     public void finDeLaPartida(boolean ganada) {
-        ventanaPrincipal.finDeLaPartida();
+        ventanaPrincipal.finDeLaPartida(ganada);
+        ventanaFinal = new VentanaFinal(controlador, ganada);
+        ventanaFinal.setVisible(true);
     }
 }

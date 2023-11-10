@@ -5,6 +5,8 @@ import ar.edu.unlu.poo.tpIntegrador.modelo.clases.Barco;
 import ar.edu.unlu.poo.tpIntegrador.modelo.clases.Coordenadas;
 import ar.edu.unlu.poo.tpIntegrador.modelo.enumerados.Direccion;
 import ar.edu.unlu.poo.tpIntegrador.modelo.enumerados.EstadoDisparo;
+import ar.edu.unlu.poo.tpIntegrador.modelo.excepciones.CasillaYaDisparada;
+import ar.edu.unlu.poo.tpIntegrador.modelo.excepciones.JugadoresYaConectados;
 import ar.edu.unlu.poo.tpIntegrador.modelo.excepciones.NoEsTurnoDelJugador;
 import ar.edu.unlu.poo.tpIntegrador.modelo.excepciones.PosicionDeBarcosInvalida;
 import ar.edu.unlu.poo.tpIntegrador.modelo.interfaces.IBarco;
@@ -28,7 +30,11 @@ public class VistaConsola implements IVista {
         System.out.println("Conectado!");
         System.out.println("Ingresa tu nombre: ");
         String nombre = scanner.nextLine();
-        this.controlador.conectarUsuario(nombre);
+        try {
+            this.controlador.conectarUsuario(nombre);
+        } catch (JugadoresYaConectados e) {
+            System.out.println("ERROR: ya hay 2 jugadores conectados a la partida");
+        }
         //comienzoDePartida();
         //mostrarTablero();
     }
@@ -117,6 +123,9 @@ public class VistaConsola implements IVista {
             this.controlador.disparar(getCoordenadasDeTeclado());
         } catch (NoEsTurnoDelJugador e) {
             e.printStackTrace();
+        } catch (CasillaYaDisparada e) {
+            System.out.println("Esa casilla ya fue disparada");
+            jugarTurno();
         }
     }
 
@@ -180,6 +189,11 @@ public class VistaConsola implements IVista {
 //                this.controlador.listoParaComenzarPartida();
 //            }
 //        }
+    }
+
+    @Override
+    public void finDeLaPartida(boolean ganada) {
+        //TODO
     }
 
 }
