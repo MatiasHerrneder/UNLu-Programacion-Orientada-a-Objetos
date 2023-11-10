@@ -1,7 +1,14 @@
 package ar.edu.unlu.poo.tpIntegrador.vista.consola;
 
 import ar.edu.unlu.poo.tpIntegrador.controlador.Controlador;
-import ar.edu.unlu.poo.tpIntegrador.modelo.*;
+import ar.edu.unlu.poo.tpIntegrador.modelo.clases.Barco;
+import ar.edu.unlu.poo.tpIntegrador.modelo.clases.Coordenadas;
+import ar.edu.unlu.poo.tpIntegrador.modelo.enumerados.Direccion;
+import ar.edu.unlu.poo.tpIntegrador.modelo.enumerados.EstadoDisparo;
+import ar.edu.unlu.poo.tpIntegrador.modelo.excepciones.NoEsTurnoDelJugador;
+import ar.edu.unlu.poo.tpIntegrador.modelo.excepciones.PosicionDeBarcosInvalida;
+import ar.edu.unlu.poo.tpIntegrador.modelo.interfaces.IBarco;
+import ar.edu.unlu.poo.tpIntegrador.modelo.interfaces.ITablero;
 import ar.edu.unlu.poo.tpIntegrador.vista.IVista;
 
 import java.util.Scanner;
@@ -36,7 +43,7 @@ public class VistaConsola implements IVista {
             s.append(letras.charAt(i));
             s.append(" | ");
             for (int j = 0; j < tablero.getTamanio(); j++) {
-                switch (tablero.getTablero()[i][j]) {
+                switch (tablero.getEstadoPos(i, j)) {
                     case SIN_DISPARAR -> s.append("   ");
                     case AGUA -> s.append(" o ");
                     default -> s.append(" X ");
@@ -105,9 +112,11 @@ public class VistaConsola implements IVista {
     }
 
     @Override
-    public void jugarTurno(boolean turnoPropio) {
-        if (turnoPropio) {
+    public void jugarTurno() {
+        try {
             this.controlador.disparar(getCoordenadasDeTeclado());
+        } catch (NoEsTurnoDelJugador e) {
+            e.printStackTrace();
         }
     }
 
@@ -119,7 +128,16 @@ public class VistaConsola implements IVista {
         barcos[2] = crearBarco(3);
         barcos[3] = crearBarco(3);
         barcos[4] = crearBarco(2);
-        this.controlador.colocarBarcos(barcos);
+        try {
+            this.controlador.colocarBarcos(barcos);
+        } catch (PosicionDeBarcosInvalida e) {
+            errorEnBarcos();
+        }
+    }
+
+    private void errorEnBarcos() {
+        System.out.println("No son validas las posiciones de los barcos");
+        colocarBarcos();
     }
 
     private IBarco crearBarco(int largo) {
@@ -153,14 +171,15 @@ public class VistaConsola implements IVista {
 
     @Override
     public void comienzoDePartida() {
-        System.out.println("Jugadores conectados! pulsa cualquier tecla si estas preparado para iniciar la partida");
-        while (true) {
-            String userInput = scanner.nextLine();
-            if (userInput.isEmpty()) {
-                break;
-            } else {
-                this.controlador.listoParaComenzarPartida();
-            }
-        }
+//        System.out.println("Jugadores conectados! pulsa cualquier tecla si estas preparado para iniciar la partida");
+//        while (true) {
+//            String userInput = scanner.nextLine();
+//            if (userInput.isEmpty()) {
+//                break;
+//            } else {
+//                this.controlador.listoParaComenzarPartida();
+//            }
+//        }
     }
+
 }

@@ -1,4 +1,6 @@
-package ar.edu.unlu.poo.tpIntegrador.modelo;
+package ar.edu.unlu.poo.tpIntegrador.modelo.clases;
+
+import ar.edu.unlu.poo.tpIntegrador.modelo.excepciones.CoordenadaInvalida;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -10,31 +12,31 @@ public class Coordenadas implements Serializable {
     private int posX;
     private int posY;
 
-    public Coordenadas(int posX, char posY) throws Exception {
+    public Coordenadas(int posX, char posY) throws CoordenadaInvalida {
         setPosX(posX);
         setPosY(posY);
     }
 
-    public Coordenadas(int posX, int posY) throws Exception {
+    public Coordenadas(int posX, int posY) throws CoordenadaInvalida {
         setPosX(posX);
         setPosY(posY);
     }
 
-    public void setPosX(int posX) throws Exception {
-        if (posX < 0 || posX >= 100) throw new Exception("No es valido el numero de la coordenada");
+    public void setPosX(int posX) throws CoordenadaInvalida {
+        if (posX < 0 || posX >= 100) throw new CoordenadaInvalida("No es valido el numero de la coordenada");
         else this.posX = posX;
     }
 
-    public void setPosY(char posY) throws Exception {
+    public void setPosY(char posY) throws CoordenadaInvalida {
         posY = Character.toLowerCase(posY);
         if (posY >= 'a' && posY <= 'z') {
             this.posY = (int) posY - (int) 'a';
         }
-        else throw new Exception("No es valida la letra de la coordenada");
+        else throw new CoordenadaInvalida("No es valida la letra de la coordenada");
     }
 
-    public void setPosY(int posY) throws Exception {
-        if (posY < 0 || posY >= 100) throw new Exception("No es valido el numero de la coordenada");
+    public void setPosY(int posY) throws CoordenadaInvalida {
+        if (posY < 0 || posY >= 100) throw new CoordenadaInvalida("No es valido el numero de la coordenada");
         else this.posY = posY;
     }
 

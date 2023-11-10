@@ -1,5 +1,12 @@
-package ar.edu.unlu.poo.tpIntegrador.modelo;
+package ar.edu.unlu.poo.tpIntegrador.modelo.clases;
 
+import ar.edu.unlu.poo.tpIntegrador.modelo.enumerados.EstadoDisparo;
+import ar.edu.unlu.poo.tpIntegrador.modelo.enumerados.Eventos;
+import ar.edu.unlu.poo.tpIntegrador.modelo.excepciones.NoEsTurnoDelJugador;
+import ar.edu.unlu.poo.tpIntegrador.modelo.excepciones.PosicionDeBarcosInvalida;
+import ar.edu.unlu.poo.tpIntegrador.modelo.interfaces.IJuego;
+import ar.edu.unlu.poo.tpIntegrador.modelo.interfaces.ITablero;
+import ar.edu.unlu.poo.tpIntegrador.modelo.records.EventoSegunJugador;
 import ar.edu.unlu.rmimvc.observer.IObservadorRemoto;
 import ar.edu.unlu.rmimvc.observer.ObservableRemoto;
 
@@ -30,7 +37,7 @@ public class Juego extends ObservableRemoto implements IJuego {
     }
 
     @Override
-    public void disparar(Usuario usuario, Coordenadas posicion) throws RemoteException {
+    public void disparar(Usuario usuario, Coordenadas posicion) throws RemoteException, NoEsTurnoDelJugador {
         Jugador jugadorQueDispara;
         Jugador jugadorQueResponde;
         if (usuario.isJugador(1)) {
@@ -42,38 +49,33 @@ public class Juego extends ObservableRemoto implements IJuego {
             jugadorQueResponde = jugador1;
         }
         if (esTurnoJugador(jugadorQueDispara)) {
+            turno++;
             EstadoDisparo estadoDisparo = jugadorQueResponde.verificarDisparoRival(posicion);
             jugadorQueDispara.marcarDisparo(new Disparo(posicion, estadoDisparo));
             switch (estadoDisparo) {
-                case AGUA-> {
-                    if (jugadorQueDispara.equals(this.jugador1)) this.notificarObservadores(Eventos.AGUA_J1);
-                    else this.notificarObservadores(Eventos.AGUA_J2);
-                }
-                case GOLPEADO -> {
-                    if (jugadorQueDispara.equals(this.jugador1)) this.notificarObservadores(Eventos.GOLPEADO_J1);
-                    else this.notificarObservadores(Eventos.GOLPEADO_J2);
-                }
-                case HUNDIDO -> {
-                    if (jugadorQueDispara.equals(this.jugador1)) this.notificarObservadores(Eventos.HUNDIDO_J1);
-                    else this.notificarObservadores(Eventos.HUNDIDO_J2);
-                }
+                case AGUA-> this.notificarObservadores(new EventoSegunJugador(Eventos.AGUA, usuario));
+                case GOLPEADO -> this.notificarObservadores(new EventoSegunJugador(Eventos.GOLPEADO, usuario));
+                case HUNDIDO -> this.notificarObservadores(new EventoSegunJugador(Eventos.HUNDIDO, usuario));
             }
         }
+        else throw new NoEsTurnoDelJugador();
     }
 
     @Override
-    public void ponerBarcos(Usuario usuario, Barco[] barcos) throws RemoteException {
+    public void ponerBarcos(Usuario usuario, Barco[] barcos) throws PosicionDeBarcosInvalida, RemoteException {
+        Jugador jugadorLlamado;
+        Jugador otroJugador;
         if (usuario.isJugador(1)) {
-            jugador1.setBarcos(barcos);
-            if (jugador2.getBarcos() != null) {
-                notificarObservadores(Eventos.COMENZAR_PARTIDA);
-            }
+            jugadorLlamado = jugador1;
+            otroJugador = jugador2;
         }
         else {
-            jugador2.setBarcos(barcos);
-            if (jugador1.getBarcos() != null) {
-                notificarObservadores(Eventos.COMENZAR_PARTIDA);
-            }
+            jugadorLlamado = jugador2;
+            otroJugador = jugador1;
+        }
+        jugadorLlamado.setBarcos(barcos);
+        if (otroJugador.getBarcos() != null) {
+            notificarObservadores(Eventos.COMENZAR_PARTIDA);
         }
     }
 

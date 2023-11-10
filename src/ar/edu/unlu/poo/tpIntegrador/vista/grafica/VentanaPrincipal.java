@@ -1,7 +1,14 @@
 package ar.edu.unlu.poo.tpIntegrador.vista.grafica;
 
 import ar.edu.unlu.poo.tpIntegrador.controlador.Controlador;
-import ar.edu.unlu.poo.tpIntegrador.modelo.*;
+import ar.edu.unlu.poo.tpIntegrador.modelo.clases.Barco;
+import ar.edu.unlu.poo.tpIntegrador.modelo.clases.Coordenadas;
+import ar.edu.unlu.poo.tpIntegrador.modelo.enumerados.Direccion;
+import ar.edu.unlu.poo.tpIntegrador.modelo.excepciones.CoordenadaInvalida;
+import ar.edu.unlu.poo.tpIntegrador.modelo.excepciones.NoEsTurnoDelJugador;
+import ar.edu.unlu.poo.tpIntegrador.modelo.excepciones.PosicionDeBarcosInvalida;
+import ar.edu.unlu.poo.tpIntegrador.modelo.interfaces.IBarco;
+import ar.edu.unlu.poo.tpIntegrador.modelo.interfaces.ITablero;
 
 import javax.swing.*;
 import java.awt.*;
@@ -14,7 +21,10 @@ public class VentanaPrincipal extends JFrame {
     private ITablero tablero;
     JButton[][] casillas;
     Barco barcoAColocar;
-    IBarco[] barcos = new Barco[5];
+    IBarco[] barcos;
+    KeyListener flechas;
+    JButton bColocarBarco;
+    JButton bGirarBarco;
             
     public VentanaPrincipal(Controlador controlador) {
         this.controlador = controlador;
@@ -35,8 +45,10 @@ public class VentanaPrincipal extends JFrame {
         //creo mi grilla de juego
         panelPrincipal.add(crearPanelGrilla(), BorderLayout.CENTER);
         //barcos
+        generarInterfazBarcos();
         crearBarcos();
 
+        //borrarInterfazBarcos();
     }
 
     private JPanel crearPanelGrilla() {
@@ -50,20 +62,25 @@ public class VentanaPrincipal extends JFrame {
                 int finalJ = j;
                 casillas[i][j].addActionListener(e -> {
                     try {
-                        //controlador.disparar(new Coordenadas(finalI, finalJ)); TODO
-                    } catch (Exception ex) {
+                        controlador.disparar(new Coordenadas(finalI, finalJ));
+                    } catch (CoordenadaInvalida ex) {
                         ex.printStackTrace();
-                    }
+                    } catch (NoEsTurnoDelJugador ignored) {}
+                    panelPrincipal.requestFocus();
                 });
-                res.add(casillas[i][j]);
+            }
+        }
+        for (int i = 0; i < casillas.length; i++) {
+            for (int j = 0; j < casillas[i].length; j++) {
+                res.add(casillas[j][i]); //en un loop afuera para que se agreguen en orden (x,y)
             }
         }
         return res;
     }
 
-    private void crearBarcos() {
+    private void generarInterfazBarcos() {
         // listeners de teclas
-        panelPrincipal.addKeyListener(new KeyListener() {
+        flechas = new KeyListener() {
             @Override
             public void keyTyped(KeyEvent e) {
                 //no usado
@@ -79,33 +96,33 @@ public class VentanaPrincipal extends JFrame {
                 if (keyCode == KeyEvent.VK_LEFT) {
                     try {
                         barcoAColocar.setPosicion(new Coordenadas(barcoAColocar.getPosicionBarco().getPosX() - 1, barcoAColocar.getPosicionBarco().getPosY()));
-                    } catch (Exception ignored) {}
+                    } catch (CoordenadaInvalida ignored) {}
                 } else if (keyCode == KeyEvent.VK_RIGHT) {
                     try {
                         barcoAColocar.setPosicion(new Coordenadas(barcoAColocar.getPosicionBarco().getPosX() + 1, barcoAColocar.getPosicionBarco().getPosY()));
-                    } catch (Exception ignored) {}
+                    } catch (CoordenadaInvalida ignored) {}
                 } else if (keyCode == KeyEvent.VK_UP) {
                     try {
                         barcoAColocar.setPosicion(new Coordenadas(barcoAColocar.getPosicionBarco().getPosX(), barcoAColocar.getPosicionBarco().getPosY() - 1));
-                    } catch (Exception ignored) {}
+                    } catch (CoordenadaInvalida ignored) {}
                 } else if (keyCode == KeyEvent.VK_DOWN) {
                     try {
                         barcoAColocar.setPosicion(new Coordenadas(barcoAColocar.getPosicionBarco().getPosX(), barcoAColocar.getPosicionBarco().getPosY() + 1));
-                    } catch (Exception ignored) {}
+                    } catch (CoordenadaInvalida ignored) {}
                 }
 
                 try {
-                    if (!barcoAColocar.colaDelBarco().isDentroDe(0, tablero.getTamanio() - 1)) barcoAColocar.setPosicion(viejaPos);
+                    if (!barcoAColocar.colaDelBarco().isDentroDe(0, tablero.getTamanio() - 1) || !barcoAColocar.getPosicionBarco().isDentroDe(0, tablero.getTamanio() - 1)) barcoAColocar.setPosicion(viejaPos); //TODO se va de la pantalla si lo pongo al reves
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 }
                 mostrarBarcoAColocar();
             }
-        });
-        panelPrincipal.setFocusable(true);
+        };
+        panelPrincipal.addKeyListener(flechas);
 
         // boton rotar barco
-        JButton bGirarBarco = new JButton("Girar barco");
+        bGirarBarco = new JButton("Girar barco");
         bGirarBarco.addActionListener(e -> {
             boolean posValida = false;
             while (!posValida) {
@@ -116,53 +133,79 @@ public class VentanaPrincipal extends JFrame {
                 } catch (Exception ignored) {}
             }
             mostrarBarcoAColocar();
+            panelPrincipal.requestFocus();
         });
         panelPrincipal.add(bGirarBarco, BorderLayout.NORTH);
 
         //boton para colocar barco
-        JButton bColocarBarco = new JButton("Colocar barco");
+        bColocarBarco = new JButton("Colocar barco");
         bColocarBarco.addActionListener(e -> colocarBarco());
         panelPrincipal.add(bColocarBarco, BorderLayout.SOUTH);
+    }
 
+    public void borrarInterfazBarcos() {
+        panelPrincipal.removeKeyListener(flechas);
+        panelPrincipal.remove(bColocarBarco);
+        panelPrincipal.remove(bGirarBarco);
+        pintarCasillasAgua();
+        panelPrincipal.revalidate();
+        panelPrincipal.repaint();
+    }
+
+    public void crearBarcos() {
+        panelPrincipal.setFocusable(true);
+
+        barcos = new IBarco[5];
         //inicializo primer barco a colocar
         try {
             barcoAColocar = new Barco(new Coordenadas(0, 0), Direccion.DERECHA, 5);
-        } catch (Exception e) {
+        } catch (CoordenadaInvalida e) {
             e.printStackTrace();
         }
         mostrarBarcoAColocar();
     }
 
     private void colocarBarco() {
-        int i = 1;
-        while (i < barcos.length && barcos[i] != null) i++;
-        if (i >= barcos.length) this.controlador.colocarBarcos(barcos); //todos los barcos creados, los paso al controlador
-        else {
+        int tam = 5;
+        if (barcos[barcos.length - 1] == null) {
+            int i = 0;
+            while (i < barcos.length && barcos[i] != null) i++;
             barcos[i] = new Barco(barcoAColocar.getPosicionBarco(), barcoAColocar.getDireccion(), barcoAColocar.getLargoDelBarco());
-            int tam = 5;
             switch (i) {
-                case 1 -> tam = 4;
-                case 2, 3 -> tam = 3;
-                case 4 -> tam = 2;
+                case 0 -> tam = 4;
+                case 1, 2 -> tam = 3;
+                case 3 -> tam = 2;
             }
+        }
+        if (barcos[barcos.length - 1] != null) {
+            try {
+                this.controlador.colocarBarcos(barcos); //todos los barcos creados, los paso al controlador
+            } catch (PosicionDeBarcosInvalida e) {
+                crearBarcos();
+            }
+        }
+        else {
             try {
                 barcoAColocar = new Barco(new Coordenadas(0, 0), Direccion.DERECHA, tam);
-            } catch (Exception e) {
+            } catch (CoordenadaInvalida e) {
                 e.printStackTrace();
             }
         }
         mostrarBarcoAColocar();
+        panelPrincipal.requestFocus();
     }
 
     private void mostrarBarcoAColocar() {
         pintarBarcosColocados();
-        Coordenadas pos = barcoAColocar.getPosicionBarco();
-        for (int i = 0; i < barcoAColocar.getLargoDelBarco(); i++) {
-            casillas[pos.getPosY()][pos.getPosX()].setBackground(Color.BLACK);
-            try {
-                pos = barcoAColocar.siguienteCoordenada(pos);
-            } catch (Exception e) {
-                e.printStackTrace();
+        if (barcos[barcos.length - 1] == null) {
+            Coordenadas pos = barcoAColocar.getPosicionBarco();
+            for (int i = 0; i < barcoAColocar.getLargoDelBarco(); i++) {
+                casillas[pos.getPosX()][pos.getPosY()].setBackground(Color.BLACK);
+                try {
+                    pos = barcoAColocar.siguienteCoordenada(pos);
+                } catch (CoordenadaInvalida e) {
+                    e.printStackTrace();
+                }
             }
         }
     }
@@ -174,15 +217,15 @@ public class VentanaPrincipal extends JFrame {
         colBarco[1] = Color.blue;
         colBarco[2] = Color.green;
         colBarco[3] = Color.yellow;
-        colBarco[4] = Color.MAGENTA;
+        colBarco[4] = Color.magenta;
         int i = 0;
         while (i < barcos.length && barcos[i] != null) {
             Coordenadas pos = barcos[i].getPosicionBarco();
             for (int j = 0; j < barcos[i].getLargoDelBarco(); j++) {
-                casillas[pos.getPosY()][pos.getPosX()].setBackground(colBarco[i]);
+                casillas[pos.getPosX()][pos.getPosY()].setBackground(colBarco[i]);
                 try {
                     pos = barcos[i].siguienteCoordenada(pos);
-                } catch (Exception e) {
+                } catch (CoordenadaInvalida e) {
                     e.printStackTrace();
                 }
             }
@@ -194,6 +237,23 @@ public class VentanaPrincipal extends JFrame {
         for (JButton[] x : casillas) {
             for (JButton y : x) {
                 y.setBackground(Color.CYAN);
+            }
+        }
+    }
+
+    public void jugarTurno() {
+        JOptionPane.showMessageDialog(panelPrincipal, "Tu turno", "Information", JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    public void mostrarTablero() {
+        ITablero tablero = controlador.getTablero(); //TODO esta mal el tablero que trae de por si
+        for (int i = 0; i < casillas.length; i++) {
+            for (int j = 0; j < casillas[i].length; j++) {
+                switch (tablero.getEstadoPos(i, j)) {
+                    case SIN_DISPARAR -> casillas[i][j].setBackground(Color.CYAN);
+                    case GOLPEADO, HUNDIDO -> casillas[i][j].setBackground(Color.RED);
+                    case AGUA -> casillas[i][j].setBackground(Color.GRAY);
+                }
             }
         }
     }

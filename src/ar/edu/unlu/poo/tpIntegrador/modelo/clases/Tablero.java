@@ -1,4 +1,7 @@
-package ar.edu.unlu.poo.tpIntegrador.modelo;
+package ar.edu.unlu.poo.tpIntegrador.modelo.clases;
+
+import ar.edu.unlu.poo.tpIntegrador.modelo.enumerados.EstadoDisparo;
+import ar.edu.unlu.poo.tpIntegrador.modelo.interfaces.ITablero;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -20,8 +23,8 @@ public class Tablero implements ITablero, Serializable {
     }
 
     @Override
-    public EstadoDisparo[][] getTablero() {
-        return posiciones;
+    public EstadoDisparo getEstadoPos(int x, int y) {
+        return posiciones[x][y];
     }
 
     public int getTamanio() {

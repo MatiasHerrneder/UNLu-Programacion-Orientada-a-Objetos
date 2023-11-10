@@ -1,6 +1,6 @@
 package ar.edu.unlu.poo.tpIntegrador.servidor;
 
-import ar.edu.unlu.poo.tpIntegrador.modelo.Juego;
+import ar.edu.unlu.poo.tpIntegrador.modelo.clases.Juego;
 import ar.edu.unlu.rmimvc.RMIMVCException;
 import ar.edu.unlu.rmimvc.Util;
 import ar.edu.unlu.rmimvc.servidor.Servidor;

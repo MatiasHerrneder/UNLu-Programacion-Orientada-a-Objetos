@@ -1,4 +1,9 @@
-package ar.edu.unlu.poo.tpIntegrador.modelo;
+package ar.edu.unlu.poo.tpIntegrador.modelo.clases;
+
+import ar.edu.unlu.poo.tpIntegrador.modelo.enumerados.Direccion;
+import ar.edu.unlu.poo.tpIntegrador.modelo.enumerados.EstadoDisparo;
+import ar.edu.unlu.poo.tpIntegrador.modelo.excepciones.CoordenadaInvalida;
+import ar.edu.unlu.poo.tpIntegrador.modelo.interfaces.IBarco;
 
 import java.io.Serializable;
 
@@ -51,37 +56,42 @@ public class Barco implements IBarco, Serializable {
                 }
                 return EstadoDisparo.HUNDIDO;
             }
+            try {
+                pos = siguienteCoordenada(pos);
+            } catch (CoordenadaInvalida e) {
+                e.printStackTrace();
+            }
         }
         return EstadoDisparo.AGUA;
     }
 
     public boolean isPosicionesValidas(int tamanioTablero, Barco[] barcos) {
         //verifico que la cabeza no se salga del tablero
-        if (!getPosicionBarco().isDentroDe(1, tamanioTablero)) return false;
+        if (!getPosicionBarco().isDentroDe(0, tamanioTablero - 1)) return false;
         //verifico que la cola no se salga del tablero
         try {
-
-            if (colaDelBarco().isDentroDe(1, tamanioTablero)) return false;
-        } catch (Exception e) {
+            if (!colaDelBarco().isDentroDe(0, tamanioTablero - 1)) return false;
+        } catch (CoordenadaInvalida e) {
             return false;
         }
         //verifico que no haya ya barcos en las casillas
         for (Barco barco : barcos) {
-            if (barco != null) {
+            if (barco != null && !barco.equals(this)) {
                 Coordenadas b1 = getPosicionBarco();
                 Coordenadas b2 = barco.getPosicionBarco();
                 for (int i = 0; i < getLargoDelBarco(); i++) {
                     for (int j = 0; j < barco.getLargoDelBarco(); j++) {
                         if (b1.equals(b2)) return false;
                         try {
-                            b2 = siguienteCoordenada(b2);
-                        } catch (Exception e) {
+                            b2 = barco.siguienteCoordenada(b2);
+                        } catch (CoordenadaInvalida e) {
                             return false;
                         }
                     }
                     try {
                         b1 = siguienteCoordenada(b1);
-                    } catch (Exception e) {
+                        b2 = barco.getPosicionBarco();
+                    } catch (CoordenadaInvalida e) {
                         return false;
                     }
                 }
@@ -90,7 +100,7 @@ public class Barco implements IBarco, Serializable {
         return true;
     }
 
-    public Coordenadas colaDelBarco() throws Exception {
+    public Coordenadas colaDelBarco() throws CoordenadaInvalida {
         return switch (getDireccion()) {
             case ABAJO -> new Coordenadas(getPosicionBarco().getPosX(),
                     getPosicionBarco().getPosY() + getLargoDelBarco() - 1);
@@ -103,7 +113,7 @@ public class Barco implements IBarco, Serializable {
         };
     }
 
-    public Coordenadas siguienteCoordenada(Coordenadas coordenadas) throws Exception {
+    public Coordenadas siguienteCoordenada(Coordenadas coordenadas) throws CoordenadaInvalida {
         return switch (getDireccion()) {
             case ABAJO -> new Coordenadas(coordenadas.getPosX(), coordenadas.getPosY() + 1);
             case ARRIBA -> new Coordenadas(coordenadas.getPosX(), coordenadas.getPosY() - 1);

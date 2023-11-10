@@ -1,11 +1,13 @@
 package ar.edu.unlu.poo.tpIntegrador.vista;
 
-import ar.edu.unlu.poo.tpIntegrador.modelo.EstadoDisparo;
+import ar.edu.unlu.poo.tpIntegrador.modelo.enumerados.EstadoDisparo;
 
 public interface IVista {
     void iniciar();
     void mostrarDisparo(EstadoDisparo estado, boolean disparoFuePropio);
-    void jugarTurno(boolean turnoPropio);
+    void jugarTurno();
     void colocarBarcos();
     void comienzoDePartida();
+    void finDeLaPartida(boolean ganada);
+//    void errorEnBarcos();
 }

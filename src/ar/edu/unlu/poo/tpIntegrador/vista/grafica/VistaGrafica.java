@@ -1,10 +1,8 @@
 package ar.edu.unlu.poo.tpIntegrador.vista.grafica;
 
 import ar.edu.unlu.poo.tpIntegrador.controlador.Controlador;
-import ar.edu.unlu.poo.tpIntegrador.modelo.EstadoDisparo;
+import ar.edu.unlu.poo.tpIntegrador.modelo.enumerados.EstadoDisparo;
 import ar.edu.unlu.poo.tpIntegrador.vista.IVista;
-
-import javax.swing.*;
 
 public class VistaGrafica implements IVista {
     private Controlador controlador;
@@ -27,22 +25,27 @@ public class VistaGrafica implements IVista {
 
     @Override
     public void mostrarDisparo(EstadoDisparo estado, boolean disparoFuePropio) {
-
+        ventanaPrincipal.mostrarTablero();
     }
 
     @Override
-    public void jugarTurno(boolean turnoPropio) {
-
+    public void jugarTurno() {
+        ventanaPrincipal.jugarTurno();
     }
 
     @Override
     public void colocarBarcos() { //primero que se ejecuta
-        this.ventanaPrincipal = new VentanaPrincipal(this.controlador);
-        this.ventanaPrincipal.setVisible(true);
+        ventanaPrincipal = new VentanaPrincipal(this.controlador);
+        ventanaPrincipal.setVisible(true);
     }
 
     @Override
     public void comienzoDePartida() { //se ejecuta una vez colocados los barcos
+        ventanaPrincipal.borrarInterfazBarcos();
+    }
 
+    @Override
+    public void finDeLaPartida(boolean ganada) {
+        ventanaPrincipal.finDeLaPartida();
     }
 }

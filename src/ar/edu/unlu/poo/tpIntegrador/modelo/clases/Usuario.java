@@ -1,4 +1,6 @@
-package ar.edu.unlu.poo.tpIntegrador.modelo;
+package ar.edu.unlu.poo.tpIntegrador.modelo.clases;
+
+import ar.edu.unlu.poo.tpIntegrador.modelo.interfaces.IUsuario;
 
 import java.io.Serial;
 import java.io.Serializable;

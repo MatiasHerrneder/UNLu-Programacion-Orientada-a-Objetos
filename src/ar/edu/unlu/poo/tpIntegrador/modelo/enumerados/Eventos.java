@@ -1,0 +1,10 @@
+package ar.edu.unlu.poo.tpIntegrador.modelo.enumerados;
+
+public enum Eventos {
+    HUNDIDO,
+    GOLPEADO,
+    AGUA,
+    COLOCAR_BARCOS,
+    COMENZAR_PARTIDA,
+    VICTORIA
+}

@@ -1,4 +1,7 @@
-package ar.edu.unlu.poo.tpIntegrador.modelo;
+package ar.edu.unlu.poo.tpIntegrador.modelo.clases;
+
+import ar.edu.unlu.poo.tpIntegrador.modelo.enumerados.EstadoDisparo;
+import ar.edu.unlu.poo.tpIntegrador.modelo.excepciones.PosicionDeBarcosInvalida;
 
 public class Jugador {
     private static final int TAMANIO_TABLERO = 10;
@@ -31,7 +34,12 @@ public class Jugador {
         return barcos;
     }
 
-    public void setBarcos(Barco[] barcos) {
+    public void setBarcos(Barco[] barcos) throws PosicionDeBarcosInvalida {
+        for (Barco barco : barcos) {
+            if (!barco.isPosicionesValidas(TAMANIO_TABLERO, barcos)) {
+                throw new PosicionDeBarcosInvalida();
+            }
+        }
         this.barcos = barcos;
     }
 

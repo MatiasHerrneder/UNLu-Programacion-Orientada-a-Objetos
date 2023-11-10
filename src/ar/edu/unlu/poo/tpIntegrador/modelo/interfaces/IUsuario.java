@@ -1,4 +1,4 @@
-package ar.edu.unlu.poo.tpIntegrador.modelo;
+package ar.edu.unlu.poo.tpIntegrador.modelo.interfaces;
 
 public interface IUsuario {
 

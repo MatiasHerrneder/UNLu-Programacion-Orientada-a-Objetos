@@ -2,7 +2,18 @@ package ar.edu.unlu.poo.tpIntegrador.controlador;
 
 import java.rmi.RemoteException;
 
-import ar.edu.unlu.poo.tpIntegrador.modelo.*;
+import ar.edu.unlu.poo.tpIntegrador.modelo.clases.Barco;
+import ar.edu.unlu.poo.tpIntegrador.modelo.clases.Coordenadas;
+import ar.edu.unlu.poo.tpIntegrador.modelo.clases.Usuario;
+import ar.edu.unlu.poo.tpIntegrador.modelo.enumerados.EstadoDisparo;
+import ar.edu.unlu.poo.tpIntegrador.modelo.enumerados.Eventos;
+import ar.edu.unlu.poo.tpIntegrador.modelo.excepciones.NoEsTurnoDelJugador;
+import ar.edu.unlu.poo.tpIntegrador.modelo.excepciones.PosicionDeBarcosInvalida;
+import ar.edu.unlu.poo.tpIntegrador.modelo.interfaces.IBarco;
+import ar.edu.unlu.poo.tpIntegrador.modelo.interfaces.IJuego;
+import ar.edu.unlu.poo.tpIntegrador.modelo.interfaces.ITablero;
+import ar.edu.unlu.poo.tpIntegrador.modelo.interfaces.IUsuario;
+import ar.edu.unlu.poo.tpIntegrador.modelo.records.EventoSegunJugador;
 import ar.edu.unlu.poo.tpIntegrador.vista.IVista;
 import ar.edu.unlu.rmimvc.cliente.IControladorRemoto;
 import ar.edu.unlu.rmimvc.observer.IObservableRemoto;
@@ -29,9 +40,13 @@ public class Controlador implements IControladorRemoto {
         this.vista = vista;
     }
 
-    public void colocarBarcos(IBarco[] barcos) {
+    public void colocarBarcos(IBarco[] barcos) throws PosicionDeBarcosInvalida {
+        Barco[] b = new Barco[barcos.length]; //por alguna razon no me dejaba castear el array directamente
+        for (int i = 0; i < barcos.length; i++) {
+            b[i] = (Barco) barcos[i];
+        }
         try {
-            this.modelo.ponerBarcos((Usuario) this.usuario, (Barco[]) barcos);
+            this.modelo.ponerBarcos((Usuario) this.usuario, b);
         } catch (RemoteException e) {
             e.printStackTrace();
         }
@@ -53,7 +68,7 @@ public class Controlador implements IControladorRemoto {
         }
     }
 
-    public void disparar(Coordenadas posicion) {
+    public void disparar(Coordenadas posicion) throws NoEsTurnoDelJugador {
         try {
             this.modelo.disparar((Usuario) this.usuario, posicion);
         } catch (RemoteException e) {
@@ -107,34 +122,36 @@ public class Controlador implements IControladorRemoto {
     @Override
     public void actualizar(IObservableRemoto observable, Object o) throws RemoteException {
         if (o instanceof Eventos) {
-            boolean esJ1 = this.usuario.isJugador(1);
             switch ((Eventos) o) {
-                case AGUA_J1 -> {
-                    this.vista.mostrarDisparo(EstadoDisparo.AGUA, esJ1);
-                    this.vista.jugarTurno(!esJ1);
-                }
-                case AGUA_J2 -> {
-                    this.vista.mostrarDisparo(EstadoDisparo.AGUA, !esJ1);
-                    this.vista.jugarTurno(esJ1);
-                }
-                case GOLPEADO_J1 -> {
-                    this.vista.mostrarDisparo(EstadoDisparo.GOLPEADO, esJ1);
-                    this.vista.jugarTurno(!esJ1);
-                }
-                case GOLPEADO_J2 -> {
-                    this.vista.mostrarDisparo(EstadoDisparo.GOLPEADO, !esJ1);
-                    this.vista.jugarTurno(esJ1);
-                }
-                case HUNDIDO_J1 -> {
-                    this.vista.mostrarDisparo(EstadoDisparo.HUNDIDO, esJ1);
-                    this.vista.jugarTurno(!esJ1);
-                }
-                case HUNDIDO_J2 -> {
-                    this.vista.mostrarDisparo(EstadoDisparo.HUNDIDO, !esJ1);
-                    this.vista.jugarTurno(esJ1);
-                }
                 case COLOCAR_BARCOS -> this.vista.colocarBarcos();
-                case COMENZAR_PARTIDA -> this.vista.jugarTurno(esJ1);
+                case COMENZAR_PARTIDA -> {
+                    this.vista.comienzoDePartida();
+                    if (this.usuario.isJugador(1)) this.vista.jugarTurno();
+                }
+            }
+        }
+        else if (o instanceof EventoSegunJugador evento) {
+            switch (evento.evento()) {
+                case AGUA, GOLPEADO, HUNDIDO -> {
+                    EstadoDisparo estado = null;
+                    switch (evento.evento()) {
+                        case AGUA -> estado = EstadoDisparo.AGUA;
+                        case GOLPEADO -> estado = EstadoDisparo.GOLPEADO;
+                        case HUNDIDO -> estado = EstadoDisparo.HUNDIDO;
+                    }
+                    if (evento.usuario().getId() == this.usuario.getId())
+                        this.vista.mostrarDisparo(estado, true);
+                    else {
+                        this.vista.mostrarDisparo(estado, false);
+                        this.vista.jugarTurno();
+                    }
+                }
+                case VICTORIA -> {
+                    this.vista.finDeLaPartida(evento.usuario().getId() == this.usuario.getId());
+                }
+//                case BARCOS_INVALIDOS -> {
+//                    if (evento.getUsuario().getId() == this.usuario.getId()) this.vista.errorEnBarcos();
+//                }
             }
         }
     }
