@@ -9,5 +9,6 @@ public interface IVista {
     void colocarBarcos();
     void comienzoDePartida();
     void finDeLaPartida(boolean ganada);
+    void volverAJugar();
 //    void errorEnBarcos();
 }

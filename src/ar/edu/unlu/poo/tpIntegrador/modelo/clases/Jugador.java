@@ -7,7 +7,7 @@ import ar.edu.unlu.poo.tpIntegrador.modelo.excepciones.PosicionDeBarcosInvalida;
 public class Jugador {
     private static final int TAMANIO_TABLERO = 10;
     private Barco[] barcos = null;
-    private final Tablero tablero;
+    private Tablero tablero;
     private int idUsuario = -1;
     private boolean listoParaComenzar = false;
 
@@ -67,6 +67,11 @@ public class Jugador {
             if (!barco.fueHundido()) return false;
         }
         return true;
+    }
+
+    public void nuevaPartida() {
+        tablero = new Tablero(TAMANIO_TABLERO);
+        barcos = null;
     }
 
 //    public boolean ponerBarco(Barco barco) {

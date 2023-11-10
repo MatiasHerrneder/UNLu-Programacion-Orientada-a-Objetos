@@ -21,4 +21,5 @@ public interface IJuego extends IObservableRemoto {
     Usuario conectarUsuario(String nombre) throws RemoteException, JugadoresYaConectados;
     void desconectarUsuario(int usuarioId) throws RemoteException;
     void cerrar(IObservadorRemoto controlador, int usuarioId) throws RemoteException;
+    void volverAJugar(Usuario usuario) throws RemoteException;
 }

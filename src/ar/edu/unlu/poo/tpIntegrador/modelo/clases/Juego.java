@@ -18,6 +18,7 @@ public class Juego extends ObservableRemoto implements IJuego {
     private Jugador jugador1;
     private Jugador jugador2;
     private int turno = 0;
+    private int volverAJugar = 0;
 
     public Juego() {
         this.jugador1 = new Jugador();
@@ -115,6 +116,18 @@ public class Juego extends ObservableRemoto implements IJuego {
     public void cerrar(IObservadorRemoto controlador, int usuarioId) throws RemoteException {
         this.removerObservador(controlador);
         this.desconectarUsuario(usuarioId);
+    }
+
+    @Override
+    public void volverAJugar(Usuario usuario) throws RemoteException {
+        if (volverAJugar != 0 && !usuario.isJugador(volverAJugar)) {
+            jugador1.nuevaPartida();
+            jugador2.nuevaPartida();
+            volverAJugar = 0;
+            turno = 0;
+            notificarObservadores(Eventos.VOLVER_A_JUGAR);
+        }
+        volverAJugar = usuario.getNumeroDeJugador();
     }
 
 }

@@ -6,23 +6,23 @@ import javax.swing.*;
 import java.awt.*;
 import java.rmi.RemoteException;
 
-public class VentanaFinal extends JFrame {
+public class VentanaFinal extends JPanel {
     public VentanaFinal(Controlador controlador, boolean ganador) {
-        setTitle("Partida terminada");
-        setSize(400, 400);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        JPanel panelPrincipal = (JPanel) getContentPane();
-        panelPrincipal.setLayout(new FlowLayout());
+        setLayout(new FlowLayout());
 
         JLabel lMensajeFin = new JLabel(ganador ? "VICTORIA" : "DERROTA");
         JButton bVolverAJugar = new JButton("Volver a jugar");
 
-        panelPrincipal.add(lMensajeFin);
-        panelPrincipal.add(bVolverAJugar);
+        add(lMensajeFin);
+        add(bVolverAJugar);
 
         bVolverAJugar.addActionListener(e -> {
             try {
                 controlador.voverAJugar();
+                remove(bVolverAJugar);
+                lMensajeFin.setText("Esperando al otro jugador");
+                revalidate();
+                repaint();
             } catch (RemoteException ex) {
                 ex.printStackTrace();
             }

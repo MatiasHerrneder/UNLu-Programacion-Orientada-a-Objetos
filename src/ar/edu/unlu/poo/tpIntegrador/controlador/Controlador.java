@@ -117,7 +117,7 @@ public class Controlador implements IControladorRemoto {
     }
 
     public void voverAJugar() throws RemoteException {
-        modelo.iniciarPartida();
+        modelo.volverAJugar((Usuario) usuario);
     }
 
     @Override
@@ -134,6 +134,7 @@ public class Controlador implements IControladorRemoto {
                     this.vista.comienzoDePartida();
                     if (this.usuario.isJugador(1)) this.vista.jugarTurno();
                 }
+                case VOLVER_A_JUGAR -> this.vista.volverAJugar();
             }
         }
         else if (o instanceof EventoSegunJugador evento) {

@@ -17,9 +17,8 @@ import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
-public class VentanaPrincipal extends JFrame {
+public class VentanaPrincipal extends JPanel {
     private Controlador controlador;
-    private JPanel panelPrincipal;
     private ITablero tablero;
     JButton[][] casillas;
     Barco barcoAColocar;
@@ -33,21 +32,10 @@ public class VentanaPrincipal extends JFrame {
         this.controlador = controlador;
         tablero = controlador.getTablero();
         //ventana principal
-        setTitle("Batalla Naval");
-        setSize(600, 600);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        panelPrincipal = (JPanel) getContentPane();
-        panelPrincipal.setLayout(new BorderLayout());
-        //menu
-        JMenuBar menu = new JMenuBar();
-        JMenu menuB1 = new JMenu("Menu");
-        JMenuItem menuB1B1 = new JMenuItem("primer boton");
-        menuB1.add(menuB1B1);
-        menu.add(menuB1);
-        setJMenuBar(menu);
-
+//        setSize(600, 600);
+        setLayout(new BorderLayout());
         //creo mi grilla de juego
-        panelPrincipal.add(crearPanelGrilla(), BorderLayout.CENTER);
+        add(crearPanelGrilla(), BorderLayout.CENTER);
         //barcos
         generarInterfazBarcos();
         crearBarcos();
@@ -72,7 +60,7 @@ public class VentanaPrincipal extends JFrame {
                     } catch (CoordenadaInvalida ex) {
                         ex.printStackTrace();
                     }
-                    panelPrincipal.requestFocus();
+                    requestFocus();
                 });
             }
         }
@@ -125,7 +113,7 @@ public class VentanaPrincipal extends JFrame {
                 mostrarBarcoAColocar();
             }
         };
-        panelPrincipal.addKeyListener(flechas);
+        addKeyListener(flechas);
 
         // boton rotar barco
         bGirarBarco = new JButton("Girar barco");
@@ -139,30 +127,28 @@ public class VentanaPrincipal extends JFrame {
                 } catch (Exception ignored) {}
             }
             mostrarBarcoAColocar();
-            panelPrincipal.requestFocus();
+            requestFocus();
         });
-        panelPrincipal.add(bGirarBarco, BorderLayout.NORTH);
+        add(bGirarBarco, BorderLayout.NORTH);
 
         //boton para colocar barco
         bColocarBarco = new JButton("Colocar barco");
         bColocarBarco.addActionListener(e -> colocarBarco());
-        panelPrincipal.add(bColocarBarco, BorderLayout.SOUTH);
+        add(bColocarBarco, BorderLayout.SOUTH);
     }
 
     public void borrarInterfazBarcos() {
-        panelPrincipal.removeKeyListener(flechas);
-        panelPrincipal.remove(bColocarBarco);
-        panelPrincipal.remove(bGirarBarco);
+        removeKeyListener(flechas);
+        remove(bColocarBarco);
+        remove(bGirarBarco);
         pintarCasillasAgua();
-//        panelPrincipal.revalidate();
-//        panelPrincipal.repaint();
 
         msg = new JLabel("");
-        panelPrincipal.add(msg, BorderLayout.NORTH);
+        add(msg, BorderLayout.NORTH);
     }
 
     public void crearBarcos() {
-        panelPrincipal.setFocusable(true);
+        setFocusable(true);
 
         barcos = new IBarco[5];
         //inicializo primer barco a colocar
@@ -201,7 +187,7 @@ public class VentanaPrincipal extends JFrame {
             }
         }
         mostrarBarcoAColocar();
-        panelPrincipal.requestFocus();
+        requestFocus();
     }
 
     private void mostrarBarcoAColocar() {

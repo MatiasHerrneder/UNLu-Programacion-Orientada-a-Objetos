@@ -27,6 +27,10 @@ public class Usuario implements IUsuario, Serializable {
         this.id = id;
     }
 
+    public int getNumeroDeJugador() {
+        return numeroDeJugador;
+    }
+
     @Override
     public String getNombre() {
         return nombre;

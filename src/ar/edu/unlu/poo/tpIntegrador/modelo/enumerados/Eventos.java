@@ -6,5 +6,6 @@ public enum Eventos {
     AGUA,
     COLOCAR_BARCOS,
     COMENZAR_PARTIDA,
-    VICTORIA
+    VICTORIA,
+    VOLVER_A_JUGAR
 }

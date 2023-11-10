@@ -196,4 +196,9 @@ public class VistaConsola implements IVista {
         //TODO
     }
 
+    @Override
+    public void volverAJugar() {
+
+    }
+
 }
