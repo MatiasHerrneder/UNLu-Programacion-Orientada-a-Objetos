@@ -7,13 +7,7 @@ import javax.swing.*;
 import java.awt.*;
 
 public class VentanaDeConexion extends JPanel {
-    private Controlador controlador;
     public VentanaDeConexion(Controlador controlador) {
-        this.controlador = controlador;
-        iniciar();
-    }
-
-    private void iniciar() {
         setLayout(new FlowLayout());
         JPanel panelPrincipal = new JPanel();
         panelPrincipal.setLayout(new GridLayout(3, 1));
@@ -39,4 +33,5 @@ public class VentanaDeConexion extends JPanel {
             }
         });
     }
+
 }

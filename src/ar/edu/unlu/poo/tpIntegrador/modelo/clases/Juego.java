@@ -15,8 +15,8 @@ import ar.edu.unlu.rmimvc.observer.ObservableRemoto;
 import java.rmi.RemoteException;
 
 public class Juego extends ObservableRemoto implements IJuego {
-    private Jugador jugador1;
-    private Jugador jugador2;
+    private final Jugador jugador1;
+    private final Jugador jugador2;
     private int turno = 0;
     private int volverAJugar = 0;
 

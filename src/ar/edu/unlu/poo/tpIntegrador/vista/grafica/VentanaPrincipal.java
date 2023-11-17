@@ -31,16 +31,12 @@ public class VentanaPrincipal extends JPanel {
     public VentanaPrincipal(Controlador controlador) {
         this.controlador = controlador;
         tablero = controlador.getTablero();
-        //ventana principal
-//        setSize(600, 600);
         setLayout(new BorderLayout());
         //creo mi grilla de juego
         add(crearPanelGrilla(), BorderLayout.CENTER);
         //barcos
         generarInterfazBarcos();
         crearBarcos();
-
-        //borrarInterfazBarcos();
     }
 
     private JPanel crearPanelGrilla() {
