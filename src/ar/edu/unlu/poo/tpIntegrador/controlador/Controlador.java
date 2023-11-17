@@ -116,8 +116,13 @@ public class Controlador implements IControladorRemoto {
         }
     }
 
-    public void voverAJugar() throws RemoteException {
-        modelo.volverAJugar((Usuario) usuario);
+    public void voverAJugar() {
+        try {
+            modelo.volverAJugar((Usuario) usuario);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+
     }
 
     @Override

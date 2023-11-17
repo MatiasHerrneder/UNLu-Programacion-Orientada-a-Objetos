@@ -14,13 +14,11 @@ import java.awt.event.ActionListener;
 
 public class VistaConsola extends JFrame implements IVista {
     private Controlador controlador;
-//    private VentanaConsola consola;
     private Flujo flujo;
     private final JTextField inputBox;
     private JTextArea outputBox;
 
     public VistaConsola(Controlador controlador) {
-//        consola = new VentanaConsola("Batalla Naval", this);
         this.controlador = controlador;
         controlador.setVista(this);
         setLayout(new BorderLayout());
@@ -36,7 +34,6 @@ public class VistaConsola extends JFrame implements IVista {
                 if (!inputBox.getText().trim().isEmpty()) {
                     escribir(">> " + inputBox.getText());
                 }
-                outputBox.setCaretPosition(outputBox.getDocument().getLength());
                 inputConsola(inputBox.getText());
                 inputBox.setText("");
             }
@@ -58,6 +55,7 @@ public class VistaConsola extends JFrame implements IVista {
 
     public void escribir(String mensaje) {
         outputBox.append(mensaje + "\n");
+        outputBox.setCaretPosition(outputBox.getDocument().getLength());
     }
 
     public void inputConsola(String input) {
@@ -87,7 +85,7 @@ public class VistaConsola extends JFrame implements IVista {
             s.append(letras.charAt(i));
             s.append(" | ");
             for (int j = 0; j < tablero.getTamanio(); j++) {
-                switch (tablero.getEstadoPos(i, j)) {
+                switch (tablero.getEstadoPos(j, i)) {
                     case SIN_DISPARAR -> s.append("   ");
                     case AGUA -> s.append(" o ");
                     default -> s.append(" X ");
@@ -108,6 +106,7 @@ public class VistaConsola extends JFrame implements IVista {
                 case GOLPEADO -> escribir("El barco enemigo fue golpeado");
                 case AGUA -> escribir("Disparo al agua");
             }
+            mostrarTablero();
         }
         else {
             switch (estado) {
@@ -116,7 +115,6 @@ public class VistaConsola extends JFrame implements IVista {
                 case AGUA -> escribir("Disparo enemigo al agua");
             }
         }
-        mostrarTablero();
     }
 
     @Override
@@ -127,16 +125,18 @@ public class VistaConsola extends JFrame implements IVista {
     @Override
     public void comienzoDePartida() {
         escribir("COMIENZA LA PARTIDA");
+        flujo = new FlujoEsperandoTurnoOponente(this, controlador);
     }
 
     @Override
     public void finDeLaPartida(boolean ganada) {
-        //TODO
+        flujo = new FlujoFinDePartida(this, controlador, ganada);
     }
 
     @Override
     public void volverAJugar() {
-
+        outputBox.setText("");
+        flujo = new FlujoConexion(this, controlador);
     }
 }
 

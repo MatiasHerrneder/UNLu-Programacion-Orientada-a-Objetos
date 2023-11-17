@@ -37,10 +37,6 @@ public class VistaGrafica extends JFrame implements IVista {
         setVisible(true);
     }
 
-    public void mostrarTablero() {
-
-    }
-
     @Override
     public void mostrarDisparo(EstadoDisparo estado, boolean disparoFuePropio) {
         ventanaPrincipal.mostrarTablero(estado, disparoFuePropio);

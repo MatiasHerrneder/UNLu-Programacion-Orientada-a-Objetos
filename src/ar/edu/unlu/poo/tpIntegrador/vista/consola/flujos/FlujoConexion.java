@@ -25,6 +25,7 @@ public class FlujoConexion extends Flujo {
                 try {
                     controlador.conectarUsuario(input);
                     estado = Estados.FINALIZADO;
+                    return null;
                 } catch (JugadoresYaConectados ex) {
                     vista.escribir("ERROR: ya hay 2 jugadores conectados a la partida");
                 }

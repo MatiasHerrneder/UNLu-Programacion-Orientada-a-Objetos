@@ -17,15 +17,11 @@ public class VentanaFinal extends JPanel {
         add(bVolverAJugar);
 
         bVolverAJugar.addActionListener(e -> {
-            try {
-                controlador.voverAJugar();
-                remove(bVolverAJugar);
-                lMensajeFin.setText("Esperando al otro jugador");
-                revalidate();
-                repaint();
-            } catch (RemoteException ex) {
-                ex.printStackTrace();
-            }
+            controlador.voverAJugar();
+            remove(bVolverAJugar);
+            lMensajeFin.setText("Esperando al otro jugador");
+            revalidate();
+            repaint();
         });
     }
 

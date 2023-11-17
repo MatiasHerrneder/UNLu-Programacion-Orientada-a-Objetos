@@ -35,14 +35,14 @@ public class FlujoInputCoordenadas extends Flujo {
             case INPUT_Y -> {
                 boolean coordValida = true;
                 try {
-                    coordenadasBarco = new Coordenadas(Integer.parseInt(posXBarco), input.charAt(0));
+                    coordenadasBarco = new Coordenadas(Integer.parseInt(posXBarco) - 1, input.charAt(0));
                     if (!coordenadasBarco.isDentroDe(0, controlador.getTablero().getTamanio() - 1)) coordValida = false;
-                } catch (CoordenadaInvalida e) {
+                } catch (CoordenadaInvalida | NumberFormatException | IndexOutOfBoundsException e) {
                     try {
-                        coordenadasBarco = new Coordenadas(Integer.parseInt(posXBarco), Integer.parseInt(input));
+                        coordenadasBarco = new Coordenadas(Integer.parseInt(posXBarco) - 1, Integer.parseInt(input) - 1);
                         if (!coordenadasBarco.isDentroDe(0, controlador.getTablero().getTamanio() - 1))
                             coordValida = false;
-                    } catch (CoordenadaInvalida ex) {
+                    } catch (CoordenadaInvalida | NumberFormatException ex) {
                         coordValida = false;
                     }
                 }
@@ -51,7 +51,7 @@ public class FlujoInputCoordenadas extends Flujo {
                     vista.escribir("Ingrese coordenada X: ");
                     estado = Estados.INPUT_X;
                 } else {
-                    vista.escribir("Ingresar direccion del barco ([N]orte [S]ur [E]ste [O]este): ");
+                    if (flujoAnterior instanceof FlujoColocarBarcos) vista.escribir("Ingresar direccion del barco ([N]orte [S]ur [E]ste [O]este): ");
                     return flujoAnterior;
                 }
             }

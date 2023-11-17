@@ -8,7 +8,8 @@ import ar.edu.unlu.poo.tpIntegrador.vista.consola.VistaConsola;
 public class FlujoJugarTurno extends Flujo {
     enum Estados {
         INICIO,
-        TURNO_JUGADO
+        TURNO_JUGADO,
+        FINALIZADO
     }
     private Estados estado;
     FlujoInputCoordenadas inputCoordenadas;
@@ -30,7 +31,7 @@ public class FlujoJugarTurno extends Flujo {
             case TURNO_JUGADO -> {
                 try {
                     this.controlador.disparar(inputCoordenadas.getCoordenadas());
-                    return null;
+                    estado = Estados.FINALIZADO;
                 } catch (NoEsTurnoDelJugador e) {
                     vista.escribir("No es tu turno");
                 } catch (CasillaYaDisparada e) {
@@ -39,6 +40,7 @@ public class FlujoJugarTurno extends Flujo {
                     return inputCoordenadas;
                 }
             }
+            case FINALIZADO -> vista.escribir("Esperando al rival");
         }
         return this;
     }
