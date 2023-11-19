@@ -2,11 +2,10 @@ package ar.edu.unlu.poo.tpIntegrador.modelo.interfaces;
 
 import ar.edu.unlu.poo.tpIntegrador.modelo.clases.Barco;
 import ar.edu.unlu.poo.tpIntegrador.modelo.clases.Coordenadas;
+import ar.edu.unlu.poo.tpIntegrador.modelo.clases.Top5Partidas;
 import ar.edu.unlu.poo.tpIntegrador.modelo.clases.Usuario;
-import ar.edu.unlu.poo.tpIntegrador.modelo.excepciones.CasillaYaDisparada;
-import ar.edu.unlu.poo.tpIntegrador.modelo.excepciones.JugadoresYaConectados;
-import ar.edu.unlu.poo.tpIntegrador.modelo.excepciones.NoEsTurnoDelJugador;
-import ar.edu.unlu.poo.tpIntegrador.modelo.excepciones.PosicionDeBarcosInvalida;
+import ar.edu.unlu.poo.tpIntegrador.modelo.excepciones.*;
+import ar.edu.unlu.poo.tpIntegrador.modelo.records.PartidaTop5;
 import ar.edu.unlu.rmimvc.observer.IObservableRemoto;
 import ar.edu.unlu.rmimvc.observer.IObservadorRemoto;
 
@@ -22,4 +21,7 @@ public interface IJuego extends IObservableRemoto {
     void desconectarUsuario(int usuarioId) throws RemoteException;
     void cerrar(IObservadorRemoto controlador, int usuarioId) throws RemoteException;
     void volverAJugar(Usuario usuario) throws RemoteException;
+    PartidaTop5[] getTop5() throws RemoteException;
+    void guardarPartida(Usuario usuario) throws RemoteException;
+    void reanudarPartida(Usuario usuario) throws RemoteException, NoHayPartidaGuardada;
 }

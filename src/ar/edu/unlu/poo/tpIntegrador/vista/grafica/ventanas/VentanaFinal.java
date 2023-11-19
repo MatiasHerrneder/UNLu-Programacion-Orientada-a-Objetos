@@ -1,4 +1,4 @@
-package ar.edu.unlu.poo.tpIntegrador.vista.grafica;
+package ar.edu.unlu.poo.tpIntegrador.vista.grafica.ventanas;
 
 import ar.edu.unlu.poo.tpIntegrador.controlador.Controlador;
 

@@ -2,7 +2,9 @@ package ar.edu.unlu.poo.tpIntegrador.vista.consola;
 
 import ar.edu.unlu.poo.tpIntegrador.controlador.Controlador;
 import ar.edu.unlu.poo.tpIntegrador.modelo.enumerados.EstadoDisparo;
+import ar.edu.unlu.poo.tpIntegrador.modelo.excepciones.NoHayPartidaGuardada;
 import ar.edu.unlu.poo.tpIntegrador.modelo.interfaces.ITablero;
+import ar.edu.unlu.poo.tpIntegrador.modelo.records.PartidaTop5;
 import ar.edu.unlu.poo.tpIntegrador.vista.IVista;
 import ar.edu.unlu.poo.tpIntegrador.vista.consola.flujos.*;
 
@@ -10,13 +12,14 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.rmi.RemoteException;
 
 
 public class VistaConsola extends JFrame implements IVista {
-    private Controlador controlador;
+    private final Controlador controlador;
     private Flujo flujo;
     private final JTextField inputBox;
-    private JTextArea outputBox;
+    private final JTextArea outputBox;
 
     public VistaConsola(Controlador controlador) {
         this.controlador = controlador;
@@ -31,10 +34,29 @@ public class VistaConsola extends JFrame implements IVista {
         inputBox.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (!inputBox.getText().trim().isEmpty()) {
-                    escribir(">> " + inputBox.getText());
+                String in = inputBox.getText();
+                if (in.equalsIgnoreCase("help")) {
+                    mostrarHelp();
                 }
-                inputConsola(inputBox.getText());
+                else if (in.equalsIgnoreCase("top5")){
+                    mostrarTop5();
+                }
+                else if (in.equalsIgnoreCase("guardarPartida")) {
+                    controlador.guardarPartida();
+                }
+                else if (in.equalsIgnoreCase("cargarPartida")) {
+                    try {
+                        controlador.cargarPartida();
+                    } catch (NoHayPartidaGuardada ex) {
+                        escribir("---- NO HAY PARTIDA GUARDADA PARA CARGAR ----");
+                    }
+                }
+                else {
+                    if (!in.trim().isEmpty()) {
+                        escribir(">> " + inputBox.getText());
+                    }
+                    inputConsola(inputBox.getText());
+                }
                 inputBox.setText("");
             }
         });
@@ -51,6 +73,8 @@ public class VistaConsola extends JFrame implements IVista {
         scroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 
         add(scroll, BorderLayout.CENTER);
+
+        escribir("ESCRIBA help PARA AYUDA SOBRE COMANDOS");
     }
 
     public void escribir(String mensaje) {
@@ -136,7 +160,43 @@ public class VistaConsola extends JFrame implements IVista {
     @Override
     public void volverAJugar() {
         outputBox.setText("");
-        flujo = new FlujoConexion(this, controlador);
+        flujo = new FlujoColocarBarcos(this, controlador);
+    }
+
+    @Override
+    public void partidaGuardada(boolean accionPropia) {
+        if (accionPropia) escribir("---- La partida fue guardada con exito ----");
+        else escribir("---- El oponente guardo la partida ----");
+    }
+
+    @Override
+    public void partidaCargada(boolean accionPropia) {
+        if (accionPropia)
+    }
+
+    private void mostrarHelp() {
+        escribir("Los siguientes comandos pueden ser accedidos en cualquier momento:\n" +
+                "top5: muestra las 5 partidas mas rapidas registradas.\n" +
+                "guardarPartida: guarda la partida en el estado actual.\n" +
+                "cargarPartida: carga la ultima partida guardada");
+    }
+
+    private void mostrarTop5() {
+        escribir("---- TOP 5 ----");
+        try {
+            PartidaTop5[] top = controlador.getTop5();
+            if (top[0] != null){
+                int i = 0;
+                while (i < top.length && top[i] != null){
+                    escribir(i + ". " + top[i].turnos() + " turnos jugados entre " + top[i].nombreJ1() + " y " + top[i].nombreJ2());
+                    i++;
+                }
+            }
+            else escribir("No hay partidas registradas");
+        } catch (RemoteException ex) {
+            escribir("Error de red");
+        }
+        escribir("---- TOP 5 ----");
     }
 }
 

@@ -10,5 +10,6 @@ public interface IVista {
     void comienzoDePartida();
     void finDeLaPartida(boolean ganada);
     void volverAJugar();
-//    void errorEnBarcos();
+    void partidaGuardada(boolean accionPropia);
+    void partidaCargada(boolean accionPropia);
 }

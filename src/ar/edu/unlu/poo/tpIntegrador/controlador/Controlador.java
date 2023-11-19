@@ -7,15 +7,13 @@ import ar.edu.unlu.poo.tpIntegrador.modelo.clases.Coordenadas;
 import ar.edu.unlu.poo.tpIntegrador.modelo.clases.Usuario;
 import ar.edu.unlu.poo.tpIntegrador.modelo.enumerados.EstadoDisparo;
 import ar.edu.unlu.poo.tpIntegrador.modelo.enumerados.Eventos;
-import ar.edu.unlu.poo.tpIntegrador.modelo.excepciones.CasillaYaDisparada;
-import ar.edu.unlu.poo.tpIntegrador.modelo.excepciones.JugadoresYaConectados;
-import ar.edu.unlu.poo.tpIntegrador.modelo.excepciones.NoEsTurnoDelJugador;
-import ar.edu.unlu.poo.tpIntegrador.modelo.excepciones.PosicionDeBarcosInvalida;
+import ar.edu.unlu.poo.tpIntegrador.modelo.excepciones.*;
 import ar.edu.unlu.poo.tpIntegrador.modelo.interfaces.IBarco;
 import ar.edu.unlu.poo.tpIntegrador.modelo.interfaces.IJuego;
 import ar.edu.unlu.poo.tpIntegrador.modelo.interfaces.ITablero;
 import ar.edu.unlu.poo.tpIntegrador.modelo.interfaces.IUsuario;
 import ar.edu.unlu.poo.tpIntegrador.modelo.records.EventoSegunJugador;
+import ar.edu.unlu.poo.tpIntegrador.modelo.records.PartidaTop5;
 import ar.edu.unlu.poo.tpIntegrador.vista.IVista;
 import ar.edu.unlu.rmimvc.cliente.IControladorRemoto;
 import ar.edu.unlu.rmimvc.observer.IObservableRemoto;
@@ -122,7 +120,26 @@ public class Controlador implements IControladorRemoto {
         } catch (RemoteException e) {
             e.printStackTrace();
         }
+    }
 
+    public PartidaTop5[] getTop5() throws RemoteException {
+        return modelo.getTop5();
+    }
+
+    public void guardarPartida() {
+        try {
+            modelo.guardarPartida((Usuario) usuario);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void cargarPartida() throws NoHayPartidaGuardada {
+        try {
+            modelo.reanudarPartida((Usuario) usuario);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -161,9 +178,12 @@ public class Controlador implements IControladorRemoto {
                 case VICTORIA -> {
                     this.vista.finDeLaPartida(evento.usuario().getId() == this.usuario.getId());
                 }
-//                case BARCOS_INVALIDOS -> {
-//                    if (evento.getUsuario().getId() == this.usuario.getId()) this.vista.errorEnBarcos();
-//                }
+                case PARTIDA_GUARDADA -> {
+                    this.vista.partidaGuardada(evento.usuario().getId() == this.usuario.getId());
+                }
+                case CARGAR_PARTIDA -> {
+                    this.vista.partidaCargada(evento.usuario().getId() == this.usuario.getId());
+                }
             }
         }
     }

@@ -1,4 +1,4 @@
-package ar.edu.unlu.poo.tpIntegrador.vista.grafica;
+package ar.edu.unlu.poo.tpIntegrador.vista.grafica.ventanas;
 
 import ar.edu.unlu.poo.tpIntegrador.controlador.Controlador;
 import ar.edu.unlu.poo.tpIntegrador.modelo.clases.Barco;
@@ -171,6 +171,8 @@ public class VentanaPrincipal extends JPanel {
         if (barcos[barcos.length - 1] != null) {
             try {
                 this.controlador.colocarBarcos(barcos); //todos los barcos creados, los paso al controlador
+                requestFocus();
+                return;
             } catch (PosicionDeBarcosInvalida e) {
                 crearBarcos();
             }

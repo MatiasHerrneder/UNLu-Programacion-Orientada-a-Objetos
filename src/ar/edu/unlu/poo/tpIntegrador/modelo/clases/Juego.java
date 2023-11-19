@@ -2,27 +2,29 @@ package ar.edu.unlu.poo.tpIntegrador.modelo.clases;
 
 import ar.edu.unlu.poo.tpIntegrador.modelo.enumerados.EstadoDisparo;
 import ar.edu.unlu.poo.tpIntegrador.modelo.enumerados.Eventos;
-import ar.edu.unlu.poo.tpIntegrador.modelo.excepciones.CasillaYaDisparada;
-import ar.edu.unlu.poo.tpIntegrador.modelo.excepciones.JugadoresYaConectados;
-import ar.edu.unlu.poo.tpIntegrador.modelo.excepciones.NoEsTurnoDelJugador;
-import ar.edu.unlu.poo.tpIntegrador.modelo.excepciones.PosicionDeBarcosInvalida;
+import ar.edu.unlu.poo.tpIntegrador.modelo.excepciones.*;
 import ar.edu.unlu.poo.tpIntegrador.modelo.interfaces.IJuego;
 import ar.edu.unlu.poo.tpIntegrador.modelo.interfaces.ITablero;
 import ar.edu.unlu.poo.tpIntegrador.modelo.records.EventoSegunJugador;
+import ar.edu.unlu.poo.tpIntegrador.modelo.records.PartidaTop5;
 import ar.edu.unlu.rmimvc.observer.IObservadorRemoto;
 import ar.edu.unlu.rmimvc.observer.ObservableRemoto;
 
 import java.rmi.RemoteException;
 
 public class Juego extends ObservableRemoto implements IJuego {
-    private final Jugador jugador1;
-    private final Jugador jugador2;
+    private Jugador jugador1;
+    private Jugador jugador2;
     private int turno = 0;
     private int volverAJugar = 0;
+    private final Top5Partidas topPartidas;
+    private final PersistenciaDePartida persistenciaDePartida;
 
     public Juego() {
         this.jugador1 = new Jugador();
         this.jugador2 = new Jugador();
+        topPartidas = new Top5Partidas();
+        persistenciaDePartida = new PersistenciaDePartida();
     }
 
     public void iniciarPartida() throws RemoteException {
@@ -61,7 +63,10 @@ public class Juego extends ObservableRemoto implements IJuego {
             case AGUA-> this.notificarObservadores(new EventoSegunJugador(Eventos.AGUA, usuario));
             case GOLPEADO -> this.notificarObservadores(new EventoSegunJugador(Eventos.GOLPEADO, usuario));
             case HUNDIDO -> {
-                if (jugadorQueResponde.todosLosBarcosHundidos()) this.notificarObservadores(new EventoSegunJugador(Eventos.VICTORIA, usuario));
+                if (jugadorQueResponde.todosLosBarcosHundidos()) {
+                    topPartidas.nuevaPartidaFinalizada(turno, jugador1.getNombre(), jugador2.getNombre());
+                    this.notificarObservadores(new EventoSegunJugador(Eventos.VICTORIA, usuario));
+                }
                 else this.notificarObservadores(new EventoSegunJugador(Eventos.HUNDIDO, usuario));
             }
         }
@@ -99,10 +104,12 @@ public class Juego extends ObservableRemoto implements IJuego {
     public Usuario conectarUsuario(String nombre) throws RemoteException, JugadoresYaConectados {
         if (!jugador1.hayUsuarioConectado()) {
             jugador1.setIdUsuario(1); //TODO
+            jugador1.setNombre(nombre);
             return new Usuario(1, nombre, 1); //TODO ver ID
         }
         else if (!jugador2.hayUsuarioConectado()) {
             jugador2.setIdUsuario(2); //TODO
+            jugador2.setNombre(nombre);
             return new Usuario(2, nombre, 2); //TODO
         }
         else throw new JugadoresYaConectados();
@@ -110,7 +117,6 @@ public class Juego extends ObservableRemoto implements IJuego {
 
     @Override
     public void desconectarUsuario(int usuarioId) throws RemoteException {
-
     }
 
     public void cerrar(IObservadorRemoto controlador, int usuarioId) throws RemoteException {
@@ -130,4 +136,22 @@ public class Juego extends ObservableRemoto implements IJuego {
         volverAJugar = usuario.getNumeroDeJugador();
     }
 
+    @Override
+    public PartidaTop5[] getTop5() throws RemoteException {
+        return topPartidas.getTop5Partidas();
+    }
+
+    @Override
+    public void guardarPartida(Usuario usuario) throws RemoteException {
+        persistenciaDePartida.guardarPartida(jugador1, jugador2, turno);
+        notificarObservadores(new EventoSegunJugador(Eventos.PARTIDA_GUARDADA, usuario));
+    }
+
+    @Override
+    public void reanudarPartida(Usuario usuario) throws RemoteException, NoHayPartidaGuardada {
+        jugador1 = persistenciaDePartida.getJugador1();
+        jugador2 = persistenciaDePartida.getJugador2();
+        turno = persistenciaDePartida.getTurno();
+        notificarObservadores(new EventoSegunJugador(Eventos.CARGAR_PARTIDA, usuario));
+    }
 }

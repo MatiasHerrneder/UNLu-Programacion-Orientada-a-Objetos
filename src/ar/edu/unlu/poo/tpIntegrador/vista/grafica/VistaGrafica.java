@@ -2,13 +2,17 @@ package ar.edu.unlu.poo.tpIntegrador.vista.grafica;
 
 import ar.edu.unlu.poo.tpIntegrador.controlador.Controlador;
 import ar.edu.unlu.poo.tpIntegrador.modelo.enumerados.EstadoDisparo;
+import ar.edu.unlu.poo.tpIntegrador.modelo.excepciones.NoHayPartidaGuardada;
 import ar.edu.unlu.poo.tpIntegrador.vista.IVista;
+import ar.edu.unlu.poo.tpIntegrador.vista.grafica.ventanas.*;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 public class VistaGrafica extends JFrame implements IVista {
-    private Controlador controlador;
+    private final Controlador controlador;
     private VentanaDeConexion ventanaDeConexion;
     private VentanaPrincipal ventanaPrincipal;
     private VentanaFinal ventanaFinal;
@@ -27,11 +31,37 @@ public class VistaGrafica extends JFrame implements IVista {
         //menu
         JMenuBar menu = new JMenuBar();
         JMenu menuB1 = new JMenu("Menu");
-        JMenuItem menuB1B1 = new JMenuItem("primer boton");
-        menuB1.add(menuB1B1);
+        JMenuItem menuB1Top5 = new JMenuItem("Top de partidas");
+        menuB1Top5.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                new VentanaTop5(controlador);
+            }
+        });
+        JMenuItem menuB1GuardarPartida = new JMenuItem("Guardar partida");
+        menuB1GuardarPartida.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                controlador.guardarPartida();
+            }
+        });
+        JMenuItem menuB1CargarPartida = new JMenuItem("Cargar partida");
+        menuB1CargarPartida.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    controlador.cargarPartida();
+                } catch (NoHayPartidaGuardada ex) {
+                    new VentanaPopup("No hay partida guardada para cargar");
+                }
+            }
+        });
+        menuB1.add(menuB1Top5);
+        menuB1.add(menuB1GuardarPartida);
+        menuB1.add(menuB1CargarPartida);
         menu.add(menuB1);
         setJMenuBar(menu);
-
+        //inicializo
         ventanaDeConexion = new VentanaDeConexion(this.controlador);
         add(ventanaDeConexion);
         setVisible(true);
@@ -79,4 +109,18 @@ public class VistaGrafica extends JFrame implements IVista {
         revalidate();
         repaint();
     }
+
+    @Override
+    public void partidaGuardada(boolean accionPropia) {
+        String msg;
+        if (accionPropia) msg = "La partida se guardo con exito";
+        else msg = "El rival guardo la partida";
+        new VentanaPopup(msg);
+    }
+
+    @Override
+    public void partidaCargada(boolean accionPropia) {
+        if (accionPropia)
+    }
+
 }

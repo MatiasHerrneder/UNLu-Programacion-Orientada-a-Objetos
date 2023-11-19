@@ -4,15 +4,26 @@ import ar.edu.unlu.poo.tpIntegrador.modelo.enumerados.EstadoDisparo;
 import ar.edu.unlu.poo.tpIntegrador.modelo.excepciones.CasillaYaDisparada;
 import ar.edu.unlu.poo.tpIntegrador.modelo.excepciones.PosicionDeBarcosInvalida;
 
-public class Jugador {
+import java.io.Serializable;
+
+public class Jugador implements Serializable {
     private static final int TAMANIO_TABLERO = 10;
     private Barco[] barcos = null;
     private Tablero tablero;
     private int idUsuario = -1;
     private boolean listoParaComenzar = false;
+    private String nombre;
 
     public Jugador() {
         tablero = new Tablero(TAMANIO_TABLERO);
+    }
+
+    public String getNombre() {
+        return nombre;
+    }
+
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
     }
 
     public boolean isListoParaComenzar() {
