@@ -39,8 +39,8 @@ public class Juego extends ObservableRemoto implements IJuego {
 
     @Override
     public ITablero getTablero(Usuario usuario) {
-        if (usuario.isJugador(1)) return (ITablero) jugador1.getTablero();
-        else return (ITablero) jugador2.getTablero();
+        if (usuario.isJugador(1)) return jugador1.getTablero();
+        else return jugador2.getTablero();
     }
 
     @Override
@@ -92,15 +92,6 @@ public class Juego extends ObservableRemoto implements IJuego {
         if (otroJugador.getBarcos() != null) {
             partidaGuardable = true;
             notificarObservadores(Eventos.COMENZAR_PARTIDA);
-        }
-    }
-
-    @Override
-    public void jugadorListoParaComenzar(Usuario usuario) throws RemoteException { //TODO SIN USO
-        if (usuario.isJugador(1)) jugador1.setListoParaComenzar();
-        else jugador2.setListoParaComenzar();
-        if (jugador1.isListoParaComenzar() && jugador2.isListoParaComenzar()) {
-            notificarObservadores(Eventos.COLOCAR_BARCOS);
         }
     }
 

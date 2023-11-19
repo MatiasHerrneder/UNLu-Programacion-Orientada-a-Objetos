@@ -4,7 +4,6 @@ import ar.edu.unlu.poo.tpIntegrador.controlador.Controlador;
 
 import javax.swing.*;
 import java.awt.*;
-import java.rmi.RemoteException;
 
 public class VentanaFinal extends JPanel {
     public VentanaFinal(Controlador controlador, boolean ganador) {

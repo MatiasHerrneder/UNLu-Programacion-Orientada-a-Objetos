@@ -2,7 +2,6 @@ package ar.edu.unlu.poo.tpIntegrador.modelo.clases;
 
 import ar.edu.unlu.poo.tpIntegrador.modelo.enumerados.Direccion;
 import ar.edu.unlu.poo.tpIntegrador.modelo.enumerados.EstadoDisparo;
-import ar.edu.unlu.poo.tpIntegrador.modelo.excepciones.CasillaYaDisparada;
 import ar.edu.unlu.poo.tpIntegrador.modelo.excepciones.CoordenadaInvalida;
 import ar.edu.unlu.poo.tpIntegrador.modelo.interfaces.IBarco;
 

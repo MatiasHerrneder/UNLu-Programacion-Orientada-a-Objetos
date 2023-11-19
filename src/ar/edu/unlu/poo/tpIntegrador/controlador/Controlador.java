@@ -53,22 +53,6 @@ public class Controlador implements IControladorRemoto {
         }
     }
 
-    public void iniciarPartida() {
-        try {
-            this.modelo.iniciarPartida();
-        } catch (RemoteException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void listoParaComenzarPartida() {
-        try {
-            this.modelo.jugadorListoParaComenzar((Usuario) this.usuario);
-        } catch (RemoteException e) {
-            e.printStackTrace();
-        }
-    }
-
     public void disparar(Coordenadas posicion) throws NoEsTurnoDelJugador, CasillaYaDisparada {
         try {
             this.modelo.disparar((Usuario) this.usuario, posicion);
@@ -88,7 +72,7 @@ public class Controlador implements IControladorRemoto {
 
     public void conectarUsuario(String nombre) throws JugadoresYaConectados {
         try {
-            this.usuario = (IUsuario) this.modelo.conectarUsuario(nombre);
+            this.usuario = this.modelo.conectarUsuario(nombre);
             if (this.usuario.isJugador(2)) modelo.iniciarPartida();
         } catch (RemoteException e) {
             // TODO Auto-generated catch block
@@ -176,12 +160,8 @@ public class Controlador implements IControladorRemoto {
                         this.vista.jugarTurno();
                     }
                 }
-                case VICTORIA -> {
-                    this.vista.finDeLaPartida(evento.usuario().getId() == this.usuario.getId());
-                }
-                case PARTIDA_GUARDADA -> {
-                    this.vista.partidaGuardada(evento.usuario().getId() == this.usuario.getId());
-                }
+                case VICTORIA -> this.vista.finDeLaPartida(evento.usuario().getId() == this.usuario.getId());
+                case PARTIDA_GUARDADA -> this.vista.partidaGuardada(evento.usuario().getId() == this.usuario.getId());
             }
         }
         else if (o instanceof EventoCargarPartida eventoCargarPartida) {

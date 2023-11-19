@@ -1,7 +1,6 @@
 package ar.edu.unlu.poo.tpIntegrador.modelo.clases;
 
 import ar.edu.unlu.poo.tpIntegrador.modelo.enumerados.EstadoDisparo;
-import ar.edu.unlu.poo.tpIntegrador.modelo.excepciones.CasillaYaDisparada;
 import ar.edu.unlu.poo.tpIntegrador.modelo.excepciones.PosicionDeBarcosInvalida;
 
 import java.io.Serializable;
@@ -88,17 +87,5 @@ public class Jugador implements Serializable {
         tablero = new Tablero(TAMANIO_TABLERO);
         barcos = null;
     }
-
-//    public boolean ponerBarco(Barco barco) {
-//        if (barco.isPosicionesValidas(TAMANIO_TABLERO, getBarcos())) {
-//
-//            if (barco.tamanioDelBarco() == 2) {
-//                if (barcos[0] != null) {
-//                    ;
-//                }
-//                else return false;
-//            }
-//        }
-//    }
 
 } 

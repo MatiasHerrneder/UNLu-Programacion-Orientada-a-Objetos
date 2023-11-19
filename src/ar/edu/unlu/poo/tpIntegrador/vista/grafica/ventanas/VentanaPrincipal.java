@@ -18,8 +18,8 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
 public class VentanaPrincipal extends JPanel {
-    private Controlador controlador;
-    private ITablero tablero;
+    private final Controlador controlador;
+    private final ITablero tablero;
     JButton[][] casillas;
     Barco barcoAColocar;
     IBarco[] barcos;
