@@ -22,6 +22,6 @@ public interface IJuego extends IObservableRemoto {
     void cerrar(IObservadorRemoto controlador, int usuarioId) throws RemoteException;
     void volverAJugar(Usuario usuario) throws RemoteException;
     PartidaTop5[] getTop5() throws RemoteException;
-    void guardarPartida(Usuario usuario) throws RemoteException;
+    void guardarPartida(Usuario usuario) throws RemoteException, PartidaNoGuardable;
     void reanudarPartida(Usuario usuario) throws RemoteException, NoHayPartidaGuardada;
 }

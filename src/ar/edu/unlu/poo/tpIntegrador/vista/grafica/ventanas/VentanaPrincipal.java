@@ -134,13 +134,15 @@ public class VentanaPrincipal extends JPanel {
     }
 
     public void borrarInterfazBarcos() {
-        removeKeyListener(flechas);
-        remove(bColocarBarco);
-        remove(bGirarBarco);
-        pintarCasillasAgua();
+        if (msg == null) {
+            removeKeyListener(flechas);
+            remove(bColocarBarco);
+            remove(bGirarBarco);
 
-        msg = new JLabel("");
-        add(msg, BorderLayout.NORTH);
+            msg = new JLabel("");
+            add(msg, BorderLayout.NORTH);
+        }
+        pintarCasillasAgua();
     }
 
     public void crearBarcos() {
@@ -234,7 +236,6 @@ public class VentanaPrincipal extends JPanel {
     }
 
     public void jugarTurno() {
-//        JOptionPane.showMessageDialog(panelPrincipal, "Tu turno", "Information", JOptionPane.INFORMATION_MESSAGE);
         mostrarMensaje("Tu turno");
     }
 
@@ -260,8 +261,6 @@ public class VentanaPrincipal extends JPanel {
 
     public void finDeLaPartida(boolean ganada) {
         mostrarTablero();
-//        if (ganada) JOptionPane.showMessageDialog(panelPrincipal, "GANASTE", "Fin de la partida", JOptionPane.INFORMATION_MESSAGE);
-//        else JOptionPane.showMessageDialog(panelPrincipal, "PERDISTE", "Fin de la partida", JOptionPane.INFORMATION_MESSAGE);
         if (ganada) mostrarMensaje("GANASTE");
         else mostrarMensaje("PERDISTE");
     }
@@ -270,7 +269,4 @@ public class VentanaPrincipal extends JPanel {
         msg.setText(mensaje);
     }
 
-    public void panelPrincipal() {
-        //panelPrincipal.add(panelJuego, BorderLayout.CENTER);
-    }
 }

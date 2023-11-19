@@ -3,6 +3,7 @@ package ar.edu.unlu.poo.tpIntegrador.vista.grafica;
 import ar.edu.unlu.poo.tpIntegrador.controlador.Controlador;
 import ar.edu.unlu.poo.tpIntegrador.modelo.enumerados.EstadoDisparo;
 import ar.edu.unlu.poo.tpIntegrador.modelo.excepciones.NoHayPartidaGuardada;
+import ar.edu.unlu.poo.tpIntegrador.modelo.excepciones.PartidaNoGuardable;
 import ar.edu.unlu.poo.tpIntegrador.vista.IVista;
 import ar.edu.unlu.poo.tpIntegrador.vista.grafica.ventanas.*;
 
@@ -16,6 +17,7 @@ public class VistaGrafica extends JFrame implements IVista {
     private VentanaDeConexion ventanaDeConexion;
     private VentanaPrincipal ventanaPrincipal;
     private VentanaFinal ventanaFinal;
+    private boolean partidaCargable = false;
 
     public VistaGrafica(Controlador controlador) {
         this.controlador = controlador;
@@ -42,18 +44,25 @@ public class VistaGrafica extends JFrame implements IVista {
         menuB1GuardarPartida.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                controlador.guardarPartida();
+                try {
+                    controlador.guardarPartida();
+                } catch (PartidaNoGuardable ex) {
+                    new VentanaPopup("Solo se puede guardar una partida comenzada");
+                }
             }
         });
         JMenuItem menuB1CargarPartida = new JMenuItem("Cargar partida");
         menuB1CargarPartida.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                try {
-                    controlador.cargarPartida();
-                } catch (NoHayPartidaGuardada ex) {
-                    new VentanaPopup("No hay partida guardada para cargar");
+                if (partidaCargable) {
+                    try {
+                        controlador.cargarPartida();
+                    } catch (NoHayPartidaGuardada ex) {
+                        new VentanaPopup("No hay partida guardada para cargar");
+                    }
                 }
+                else new VentanaPopup("Solo se puede cargar una partida\nuna vez se conectaron los usuarios");
             }
         });
         menuB1.add(menuB1Top5);
@@ -84,6 +93,7 @@ public class VistaGrafica extends JFrame implements IVista {
         add(ventanaPrincipal);
         revalidate();
         repaint();
+        partidaCargable = true;
     }
 
     @Override
@@ -120,7 +130,13 @@ public class VistaGrafica extends JFrame implements IVista {
 
     @Override
     public void partidaCargada(boolean accionPropia) {
-        if (accionPropia)
+        comienzoDePartida();
+        if (accionPropia) {
+            new VentanaPopup("Partida cargada con exito");
+        }
+        else new VentanaPopup("El oponente cargo una partida");
+        revalidate();
+        repaint();
     }
 
 }

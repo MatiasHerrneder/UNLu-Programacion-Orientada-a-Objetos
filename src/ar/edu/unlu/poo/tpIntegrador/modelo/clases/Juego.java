@@ -1,6 +1,7 @@
 package ar.edu.unlu.poo.tpIntegrador.modelo.clases;
 
 import ar.edu.unlu.poo.tpIntegrador.modelo.enumerados.EstadoDisparo;
+import ar.edu.unlu.poo.tpIntegrador.modelo.enumerados.EventoCargarPartida;
 import ar.edu.unlu.poo.tpIntegrador.modelo.enumerados.Eventos;
 import ar.edu.unlu.poo.tpIntegrador.modelo.excepciones.*;
 import ar.edu.unlu.poo.tpIntegrador.modelo.interfaces.IJuego;
@@ -19,6 +20,7 @@ public class Juego extends ObservableRemoto implements IJuego {
     private int volverAJugar = 0;
     private final Top5Partidas topPartidas;
     private final PersistenciaDePartida persistenciaDePartida;
+    private boolean partidaGuardable = false;
 
     public Juego() {
         this.jugador1 = new Jugador();
@@ -66,6 +68,7 @@ public class Juego extends ObservableRemoto implements IJuego {
                 if (jugadorQueResponde.todosLosBarcosHundidos()) {
                     topPartidas.nuevaPartidaFinalizada(turno, jugador1.getNombre(), jugador2.getNombre());
                     this.notificarObservadores(new EventoSegunJugador(Eventos.VICTORIA, usuario));
+                    partidaGuardable = false;
                 }
                 else this.notificarObservadores(new EventoSegunJugador(Eventos.HUNDIDO, usuario));
             }
@@ -87,6 +90,7 @@ public class Juego extends ObservableRemoto implements IJuego {
         }
         jugadorLlamado.setBarcos(barcos);
         if (otroJugador.getBarcos() != null) {
+            partidaGuardable = true;
             notificarObservadores(Eventos.COMENZAR_PARTIDA);
         }
     }
@@ -142,9 +146,12 @@ public class Juego extends ObservableRemoto implements IJuego {
     }
 
     @Override
-    public void guardarPartida(Usuario usuario) throws RemoteException {
-        persistenciaDePartida.guardarPartida(jugador1, jugador2, turno);
-        notificarObservadores(new EventoSegunJugador(Eventos.PARTIDA_GUARDADA, usuario));
+    public void guardarPartida(Usuario usuario) throws RemoteException, PartidaNoGuardable {
+        if (jugador1.getBarcos() != null && jugador2.getBarcos() != null && partidaGuardable) {
+            persistenciaDePartida.guardarPartida(jugador1, jugador2, turno);
+            notificarObservadores(new EventoSegunJugador(Eventos.PARTIDA_GUARDADA, usuario));
+        }
+        else throw new PartidaNoGuardable();
     }
 
     @Override
@@ -152,6 +159,8 @@ public class Juego extends ObservableRemoto implements IJuego {
         jugador1 = persistenciaDePartida.getJugador1();
         jugador2 = persistenciaDePartida.getJugador2();
         turno = persistenciaDePartida.getTurno();
-        notificarObservadores(new EventoSegunJugador(Eventos.CARGAR_PARTIDA, usuario));
+        partidaGuardable = true;
+        notificarObservadores(new EventoCargarPartida(new EventoSegunJugador(Eventos.CARGAR_PARTIDA, usuario),
+                esTurnoJugador(jugador1) ? jugador1.getIdUsuario() : jugador2.getIdUsuario()));
     }
 }

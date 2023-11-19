@@ -17,6 +17,7 @@ public class FlujoFinDePartida extends Flujo {
         if (!esperandoOtroJugador) {
             controlador.voverAJugar();
             esperandoOtroJugador = true;
+            return null;
         }
         else vista.escribir("Esperando al otro jugador...");
         return this;

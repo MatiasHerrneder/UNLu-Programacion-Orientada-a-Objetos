@@ -31,7 +31,7 @@ public class VentanaTop5 extends JFrame {
         if (records[0] != null) {
             int i = 0;
             while (i < records.length && records[i] != null){
-                JLabel label = new JLabel(i + ". " + records[i].turnos() + " turnos jugados entre " + records[i].nombreJ1() + " y " + records[i].nombreJ2());
+                JLabel label = new JLabel(i+1 + "_ " + records[i].turnos() + " turnos jugados entre " + records[i].nombreJ1() + " y " + records[i].nombreJ2());
                 panel.add(label);
                 i++;
             }

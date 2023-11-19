@@ -15,6 +15,7 @@ public class Top5Partidas {
         for (int i = 0; i < partidas.length; i++) {
             if (partidas[i] == null) {
                 partidas[i] = nuevaPartida;
+                guardar();
                 return;
             }
             if (partidas[i].turnos() > turnos) {

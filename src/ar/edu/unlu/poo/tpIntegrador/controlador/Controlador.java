@@ -6,6 +6,7 @@ import ar.edu.unlu.poo.tpIntegrador.modelo.clases.Barco;
 import ar.edu.unlu.poo.tpIntegrador.modelo.clases.Coordenadas;
 import ar.edu.unlu.poo.tpIntegrador.modelo.clases.Usuario;
 import ar.edu.unlu.poo.tpIntegrador.modelo.enumerados.EstadoDisparo;
+import ar.edu.unlu.poo.tpIntegrador.modelo.enumerados.EventoCargarPartida;
 import ar.edu.unlu.poo.tpIntegrador.modelo.enumerados.Eventos;
 import ar.edu.unlu.poo.tpIntegrador.modelo.excepciones.*;
 import ar.edu.unlu.poo.tpIntegrador.modelo.interfaces.IBarco;
@@ -126,7 +127,7 @@ public class Controlador implements IControladorRemoto {
         return modelo.getTop5();
     }
 
-    public void guardarPartida() {
+    public void guardarPartida() throws PartidaNoGuardable {
         try {
             modelo.guardarPartida((Usuario) usuario);
         } catch (RemoteException e) {
@@ -181,8 +182,14 @@ public class Controlador implements IControladorRemoto {
                 case PARTIDA_GUARDADA -> {
                     this.vista.partidaGuardada(evento.usuario().getId() == this.usuario.getId());
                 }
+            }
+        }
+        else if (o instanceof EventoCargarPartida eventoCargarPartida) {
+            switch (eventoCargarPartida.evento().evento()) {
                 case CARGAR_PARTIDA -> {
-                    this.vista.partidaCargada(evento.usuario().getId() == this.usuario.getId());
+                    this.vista.partidaCargada(eventoCargarPartida.evento().usuario().getId() == this.usuario.getId());
+                    vista.mostrarDisparo(EstadoDisparo.SIN_DISPARAR, false);
+                    if (eventoCargarPartida.idJugadorSiguienteTurno() == eventoCargarPartida.evento().usuario().getId()) this.vista.jugarTurno();
                 }
             }
         }

@@ -3,6 +3,7 @@ package ar.edu.unlu.poo.tpIntegrador.vista.consola;
 import ar.edu.unlu.poo.tpIntegrador.controlador.Controlador;
 import ar.edu.unlu.poo.tpIntegrador.modelo.enumerados.EstadoDisparo;
 import ar.edu.unlu.poo.tpIntegrador.modelo.excepciones.NoHayPartidaGuardada;
+import ar.edu.unlu.poo.tpIntegrador.modelo.excepciones.PartidaNoGuardable;
 import ar.edu.unlu.poo.tpIntegrador.modelo.interfaces.ITablero;
 import ar.edu.unlu.poo.tpIntegrador.modelo.records.PartidaTop5;
 import ar.edu.unlu.poo.tpIntegrador.vista.IVista;
@@ -20,6 +21,7 @@ public class VistaConsola extends JFrame implements IVista {
     private Flujo flujo;
     private final JTextField inputBox;
     private final JTextArea outputBox;
+    private boolean partidaCargable = false;
 
     public VistaConsola(Controlador controlador) {
         this.controlador = controlador;
@@ -42,14 +44,21 @@ public class VistaConsola extends JFrame implements IVista {
                     mostrarTop5();
                 }
                 else if (in.equalsIgnoreCase("guardarPartida")) {
-                    controlador.guardarPartida();
+                    try {
+                        controlador.guardarPartida();
+                    } catch (PartidaNoGuardable ex) {
+                        escribir("Solo se puede guardar una partida comenzada");
+                    }
                 }
                 else if (in.equalsIgnoreCase("cargarPartida")) {
-                    try {
-                        controlador.cargarPartida();
-                    } catch (NoHayPartidaGuardada ex) {
-                        escribir("---- NO HAY PARTIDA GUARDADA PARA CARGAR ----");
+                    if (partidaCargable) {
+                        try {
+                            controlador.cargarPartida();
+                        } catch (NoHayPartidaGuardada ex) {
+                            escribir("---- NO HAY PARTIDA GUARDADA PARA CARGAR ----");
+                        }
                     }
+                    else escribir("Antes de cargar una partida se deben conectar los usuarios");
                 }
                 else {
                     if (!in.trim().isEmpty()) {
@@ -95,6 +104,7 @@ public class VistaConsola extends JFrame implements IVista {
 
     @Override
     public void colocarBarcos() {
+        partidaCargable = true;
         flujo = new FlujoColocarBarcos(this, controlador);
         inputConsola("");
     }
@@ -121,10 +131,9 @@ public class VistaConsola extends JFrame implements IVista {
         }
     }
 
-
     @Override
     public void mostrarDisparo(EstadoDisparo estado, boolean disparoFuePropio) {
-        if (disparoFuePropio) {
+        if (disparoFuePropio || estado == EstadoDisparo.SIN_DISPARAR) {
             switch (estado) {
                 case HUNDIDO -> escribir("El barco enemigo fue hundido!");
                 case GOLPEADO -> escribir("El barco enemigo fue golpeado");
@@ -161,6 +170,7 @@ public class VistaConsola extends JFrame implements IVista {
     public void volverAJugar() {
         outputBox.setText("");
         flujo = new FlujoColocarBarcos(this, controlador);
+        inputConsola("");
     }
 
     @Override
@@ -171,14 +181,19 @@ public class VistaConsola extends JFrame implements IVista {
 
     @Override
     public void partidaCargada(boolean accionPropia) {
-        if (accionPropia)
+        if (accionPropia) {
+            escribir("---- LA PARTIDA SE CARGO CON EXITO ----");
+        }
+        else escribir("---- EL OPONENTE CARGO UNA PARTIDA ----");
+        flujo = new FlujoEsperandoTurnoOponente(this, controlador);
     }
 
     private void mostrarHelp() {
-        escribir("Los siguientes comandos pueden ser accedidos en cualquier momento:\n" +
-                "top5: muestra las 5 partidas mas rapidas registradas.\n" +
-                "guardarPartida: guarda la partida en el estado actual.\n" +
-                "cargarPartida: carga la ultima partida guardada");
+        escribir("""
+                Los siguientes comandos pueden ser accedidos en cualquier momento:
+                top5: muestra las 5 partidas mas rapidas registradas.
+                guardarPartida: guarda la partida en el estado actual.
+                cargarPartida: carga la ultima partida guardada""");
     }
 
     private void mostrarTop5() {
@@ -188,7 +203,7 @@ public class VistaConsola extends JFrame implements IVista {
             if (top[0] != null){
                 int i = 0;
                 while (i < top.length && top[i] != null){
-                    escribir(i + ". " + top[i].turnos() + " turnos jugados entre " + top[i].nombreJ1() + " y " + top[i].nombreJ2());
+                    escribir(i+1 + "_ " + top[i].turnos() + " turnos jugados entre " + top[i].nombreJ1() + " y " + top[i].nombreJ2());
                     i++;
                 }
             }

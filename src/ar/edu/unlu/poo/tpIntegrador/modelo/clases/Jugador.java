@@ -46,6 +46,10 @@ public class Jugador implements Serializable {
         return barcos;
     }
 
+    public int getIdUsuario() {
+        return idUsuario;
+    }
+
     public void setBarcos(Barco[] barcos) throws PosicionDeBarcosInvalida {
         for (Barco barco : barcos) {
             if (!barco.isPosicionesValidas(TAMANIO_TABLERO, barcos)) {
